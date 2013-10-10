@@ -8,8 +8,8 @@
 
     <context:component-scan base-package="net.groster.moex.forts.drunkypenguin.core"/>
 
-    <bean id="fastConfPath" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="ftp://ftp.micex.ru/pub/FAST/Spectra/templates/"/>
+    <bean id="fastConfURI" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="ftp.micex.ru/pub/FAST/Spectra/templates/"/>
     </bean>
 
 </beans>
