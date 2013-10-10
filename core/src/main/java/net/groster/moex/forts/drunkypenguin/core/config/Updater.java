@@ -1,6 +1,7 @@
 package net.groster.moex.forts.drunkypenguin.core.config;
 
 import java.io.File;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -12,9 +13,11 @@ import org.slf4j.LoggerFactory;
 public class Updater extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Updater.class);
-    private boolean continueWorking = true;
+    private volatile boolean continueWorking = true;
     @Resource
     private String fastConfPath;
+    @Resource
+    private Updater updater;
 
     @Override
     public void run() {
@@ -24,8 +27,13 @@ public class Updater extends Thread {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException iE) {
-                continueWorking = false;
             }
         }
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        continueWorking = false;
+        updater.interrupt();
     }
 }
