@@ -18,11 +18,24 @@
     <url>http://groster.net</url>
     <inceptionYear>2010</inceptionYear>
 
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/kullfar/drunkyPenguin/issues</url>
+    </issueManagement>
+
     <licenses>
         <license>
+            <name>GNU General Public License (GPL), Version 3 or later</name>
+            <url>http://www.fsf.org/licensing/licenses/gpl.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/kullfar/drunkyPenguin.git</connection>
+        <developerConnection>scm:git:git@github.com:kullfar/drunkyPenguin.git</developerConnection>
+        <url>https://github.com/kullfar/drunkyPenguin</url>
+    </scm>
 
     <organization>
         <name>groster.net</name>
