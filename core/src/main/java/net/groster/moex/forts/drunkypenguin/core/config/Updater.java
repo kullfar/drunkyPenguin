@@ -28,13 +28,13 @@ public class Updater extends Thread {
     private String fastConfURI;
     @Resource
     private Updater updater;
-    private String configurationXmlFileName = "configuration.xml";
-    private String templatesXmlFileName = "templates.xml";
-    private String START_CHECKING_LOG_STRING = "Checking for {'configurationXmlFileName'='" + configurationXmlFileName
-            + "', 'templatesXmlFileName'='" + templatesXmlFileName + "'}.";
-    private String FINISH_CHECKING_LOG_STRING = "Finished checking for {'configurationXmlFileName'='"
-            + configurationXmlFileName + "', 'templatesXmlFileName'='" + templatesXmlFileName + "'}.";
-    private int period = 86_400_000; //daily
+    private static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
+    private static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
+    private static final String START_CHECKING_LOG_STRING = "Checking for {'configurationXmlFileName'='"
+            + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
+    private static final String FINISH_CHECKING_LOG_STRING = "Finished checking for {'configurationXmlFileName'='"
+            + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
+    private static final int PERIOD = 86400000; //daily
 
     @Override
     public void run() {
@@ -42,15 +42,15 @@ public class Updater extends Thread {
             LOGGER.info(START_CHECKING_LOG_STRING);
 
             try {
-                checkConfFile(configurationXmlFileName);
-                checkConfFile(templatesXmlFileName);
+                checkConfFile(CONFIGURATION_XML_FILE_NAME);
+                checkConfFile(TEMPLATES_XML_FILE_NAME);
             } catch (IOException iOE) {
                 LOGGER.error("Smth wrong.", iOE);
             }
 
             LOGGER.info(FINISH_CHECKING_LOG_STRING);
             try {
-                Thread.sleep(period);
+                Thread.sleep(PERIOD);
             } catch (InterruptedException iE) {
             }
         }
@@ -62,14 +62,14 @@ public class Updater extends Thread {
         updater.interrupt();
     }
 
-    private void checkConfFile(String xmlFileName) throws IOException {
+    private void checkConfFile(final String xmlFileName) throws IOException {
         LOGGER.info("Checking for '" + xmlFileName + "'.");
-        File xmlFile = new File(xmlFileName);
+        final File xmlFile = new File(xmlFileName);
         if (xmlFile.isFile()) {
             try {
-                DateTime dtXmlFile = new DateTime(xmlFile.lastModified());
-                DateTime dtRemoteFile = new DateTime(new URL("http://" + fastConfURI + xmlFileName).openConnection().
-                        getLastModified());
+                final DateTime dtXmlFile = new DateTime(xmlFile.lastModified());
+                final DateTime dtRemoteFile = new DateTime(new URL("http://" + fastConfURI + xmlFileName).
+                        openConnection().getLastModified());
                 LOGGER.info("Local '" + xmlFileName + "' is from '" + dtXmlFile.toString() + "', remote is from '"
                         + dtRemoteFile.toString() + "'.");
                 if (dtXmlFile.isAfter(dtRemoteFile)) {
@@ -98,7 +98,7 @@ public class Updater extends Thread {
         }
     }
 
-    private void downloadNewConfFile(File xmlFile, String xmlFileName) throws IOException {
+    private void downloadNewConfFile(final File xmlFile, final String xmlFileName) throws IOException {
         LOGGER.info("Start downloading '" + xmlFileName + "'.");
 
         if (!xmlFile.createNewFile()) {
