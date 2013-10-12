@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class Updater extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Updater.class);
-    private static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
+    public static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
     public static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
     private static final String START_CHECKING_LOG_STRING = "Checking for {'configurationXmlFileName'='"
             + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
