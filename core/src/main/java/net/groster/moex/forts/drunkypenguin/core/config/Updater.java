@@ -23,18 +23,18 @@ import org.slf4j.LoggerFactory;
 public class Updater extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Updater.class);
-    private volatile boolean continueWorking = true;
-    @Resource
-    private String fastConfURI;
-    @Resource
-    private Updater updater;
     private static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
     public static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
     private static final String START_CHECKING_LOG_STRING = "Checking for {'configurationXmlFileName'='"
             + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
     private static final String FINISH_CHECKING_LOG_STRING = "Finished checking for {'configurationXmlFileName'='"
             + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
-    private static final int PERIOD = 86400000; //daily
+    private static final int PERIOD = 86_400_000; //daily
+    private volatile boolean continueWorking = true;
+    @Resource
+    private String fastConfURI;
+    @Resource
+    private Updater updater;
 
     @Override
     public void run() {

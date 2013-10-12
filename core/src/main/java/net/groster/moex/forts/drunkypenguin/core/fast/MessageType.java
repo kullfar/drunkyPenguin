@@ -25,7 +25,7 @@ public enum MessageType {
     static {
         final Map<String, MessageType> tmpName2MessageType = new HashMap<>(MessageType.values().length);
         for (final MessageType messageType : MessageType.values()) {
-            tmpName2MessageType.put(messageType.name, messageType);
+            tmpName2MessageType.put(messageType.getName(), messageType);
         }
         NAME_2_MESSAGE_TYPE = Collections.unmodifiableMap(tmpName2MessageType);
     }
@@ -44,5 +44,9 @@ public enum MessageType {
             throw new IllegalArgumentException();
         }
         return messageType;
+    }
+
+    public String getName() {
+        return name;
     }
 }
