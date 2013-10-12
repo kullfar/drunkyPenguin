@@ -29,7 +29,7 @@ public class Updater extends Thread {
     @Resource
     private Updater updater;
     private static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
-    private static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
+    public static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
     private static final String START_CHECKING_LOG_STRING = "Checking for {'configurationXmlFileName'='"
             + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
     private static final String FINISH_CHECKING_LOG_STRING = "Finished checking for {'configurationXmlFileName'='"
