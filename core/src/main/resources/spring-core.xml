@@ -9,7 +9,7 @@
     <context:component-scan base-package="net.groster.moex.forts.drunkypenguin.core"/>
 
     <bean id="fastConfURI" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="ftp.micex.ru/pub/FAST/Spectra/templates/"/>
+        <constructor-arg type="java.lang.String" value="ftp.moex.com/pub/FAST/Spectra/templates/"/>
     </bean>
 
 </beans>
