@@ -8,6 +8,8 @@ public class Connection {
     private ConnectionType type;
     @XmlElement
     private Protocol protocol;
+    @XmlElement(name = "src-ip")
+    private String srcIp;
     @XmlElement
     private String ip;
     @XmlElement

@@ -1,6 +1,5 @@
 package net.groster.moex.forts.drunkypenguin.core.fast;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.PostConstruct;
@@ -47,8 +46,8 @@ public class FastService {
             final Unmarshaller unmarshaller = JAXBContext.newInstance(Configuration.class).createUnmarshaller();
             configuration = (Configuration) unmarshaller.unmarshal(configurationSource);
             LOGGER.info("Loaded FAST configuration successfully.");
-            //TODO: remove next line. just for testing purposes
-            JAXBContext.newInstance(Configuration.class).createMarshaller().marshal(configuration, new File("conf.xml"));
+            //Use next line for testing. Write parsed xml file to disk and compare it with original
+            //JAXBContext.newInstance(Configuration.class).createMarshaller().marshal(configuration, new File("conf.xml"));
         } catch (IOException ioE) {
         } catch (JAXBException jaxbE) {
             throw new RuntimeException("It's fatal, dunno what to do with this", jaxbE);
