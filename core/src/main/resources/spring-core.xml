@@ -8,8 +8,16 @@
 
     <context:component-scan base-package="net.groster.moex.forts.drunkypenguin.core"/>
 
-    <bean id="fastConfURI" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="ftp.moex.com/pub/FAST/Spectra/templates/"/>
+    <bean id="currentConfigurationXmlTimestamp" class="java.lang.Long">
+        <constructor-arg type="long" value="1382349687000"/>
+    </bean>
+
+    <bean id="currentTemplateXmlTimestamp" class="java.lang.Long">
+        <constructor-arg type="long" value="1381999139000"/>
+    </bean>
+
+    <bean id="fastConfURL" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="http://ftp.moex.com/pub/FAST/Spectra/templates/M1/"/>
     </bean>
 
 </beans>

@@ -1,4 +1,4 @@
-package net.groster.moex.forts.drunkypenguin.core.config;
+package net.groster.moex.forts.drunkypenguin.core.fast.config.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
