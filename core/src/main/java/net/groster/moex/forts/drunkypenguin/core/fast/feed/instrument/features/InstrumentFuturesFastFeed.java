@@ -1,5 +1,6 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import net.groster.moex.forts.drunkypenguin.core.fast.ConnectionThread;
@@ -17,9 +18,9 @@ import org.springframework.beans.factory.BeanFactory;
 @Singleton
 public class InstrumentFuturesFastFeed {
 
-    @Named
+    @Inject
     private FastService fastService;
-    @Named
+    @Inject
     private BeanFactory beanFactory;
 
     public void start() {

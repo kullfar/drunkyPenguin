@@ -3,6 +3,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
@@ -26,7 +27,7 @@ public class FastService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FastService.class);
     private MessageTemplate[] templates;
     private Configuration configuration;
-    @Named
+    @Inject
     private InstrumentFuturesFastFeed instrumentFuturesFastFeed;
 
     @PostConstruct

@@ -3,6 +3,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.openfast.MessageHandler;
 import org.openfast.MessageInputStream;
@@ -23,7 +24,7 @@ public class ConnectionThread extends Thread {
     private volatile boolean work = true;
     private MulticastClientEndpoint multicastClientEndpoint;
     private MessageHandler messageHandler;
-    @Named
+    @Inject
     private FastService fastService;
 
     public void init(final String name, final MulticastClientEndpoint multicastClientEndpoint,
