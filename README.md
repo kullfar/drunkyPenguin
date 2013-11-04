@@ -1,4 +1,4 @@
 drunkyPenguin
 =============
 
-java platform for trading on FORTS via FIX/FAST gates
+java platform for trading on MOEX FORTS via FIX/FAST gates
