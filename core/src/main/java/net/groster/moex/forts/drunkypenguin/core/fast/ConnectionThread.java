@@ -58,8 +58,9 @@ public class ConnectionThread extends Thread {
             } catch (RuntimeException rE) {
                 if (rE.getCause() instanceof SocketTimeoutException) {
                     LOGGER.warn("socket timeout exception. Will try to reconnect");
+                } else {
+                    throw rE;
                 }
-                throw rE;
             } catch (FastConnectionException | IOException ex) {
                 LOGGER.error("Error connecting", ex);
             } finally {
