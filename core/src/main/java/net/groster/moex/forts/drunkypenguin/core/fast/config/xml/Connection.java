@@ -16,4 +16,21 @@ public class Connection {
     private int port;
     @XmlElement
     private Feed feed;
+
+    public ConnectionType getType() {
+        return type;
+    }
+
+    public Feed getFeed() {
+        return feed;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
 }

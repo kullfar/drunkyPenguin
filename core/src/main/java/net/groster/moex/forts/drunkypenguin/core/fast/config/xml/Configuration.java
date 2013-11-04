@@ -19,4 +19,8 @@ public class Configuration {
     private String marketId;
     @XmlElement(name = "MarketDataGroup")
     private List<MarketDataGroup> marketDataGroups;
+
+    public List<MarketDataGroup> getMarketDataGroups() {
+        return marketDataGroups;
+    }
 }

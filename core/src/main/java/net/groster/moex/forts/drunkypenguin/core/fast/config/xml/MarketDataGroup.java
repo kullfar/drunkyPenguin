@@ -21,4 +21,17 @@ public class MarketDataGroup {
     @XmlElementWrapper
     @XmlElement(name = "connection")
     private List<Connection> connections;
+
+    public FeedType getFeedType() {
+        return feedType;
+    }
+
+    public MarketID getMarketID() {
+        return marketID;
+    }
+
+    public List<Connection> getConnections() {
+        return connections;
+    }
+
 }
