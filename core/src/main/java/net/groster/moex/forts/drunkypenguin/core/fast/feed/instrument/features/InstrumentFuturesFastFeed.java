@@ -1,5 +1,8 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features;
 
+import java.util.HashSet;
+import java.util.Set;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -22,6 +25,7 @@ public class InstrumentFuturesFastFeed {
     private FastService fastService;
     @Inject
     private BeanFactory beanFactory;
+    private final Set<ConnectionThread> connectionThreads = new HashSet<>();
 
     public void start() {
         final MarketDataGroup marketDataGroup = fastService.getMarketDataGroup(FeedType.RTS_INSTR, MarketID.FUTURES);
@@ -39,9 +43,17 @@ public class InstrumentFuturesFastFeed {
                 default:
                     continue;
             }
-            final ConnectionThread connectionThread = (ConnectionThread) beanFactory.getBean(ConnectionThread.class);
+            final ConnectionThread connectionThread = beanFactory.getBean(ConnectionThread.class);
             connectionThread.init(feedConnectionName, new MulticastClientEndpoint(connection.getPort(), connection.getIp()), messageHandler);
             connectionThread.start();
+            connectionThreads.add(connectionThread);
+        }
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        for (final ConnectionThread connectionThread : connectionThreads) {
+            connectionThread.stopConnection();
         }
     }
 }

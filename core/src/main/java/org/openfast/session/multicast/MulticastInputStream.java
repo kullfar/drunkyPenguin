@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 
 public class MulticastInputStream extends InputStream {
 
-    private static final int BUFFER_SIZE = 64 * 1024;
+    private static final int BUFFER_SIZE = 64 * 1_024;
     private final MulticastSocket socket;
     private final ByteBuffer buffer;
 
@@ -39,7 +39,7 @@ public class MulticastInputStream extends InputStream {
 
     public MulticastInputStream(final MulticastSocket socket, final int bufferSize) throws SocketException {
         this.socket = socket;
-        socket.setSoTimeout(45000); //this is a patch to the original OpenFAST version
+        socket.setSoTimeout(45_000); //this is a patch to the original OpenFAST version
         this.buffer = ByteBuffer.allocate(bufferSize);
         buffer.flip();
     }

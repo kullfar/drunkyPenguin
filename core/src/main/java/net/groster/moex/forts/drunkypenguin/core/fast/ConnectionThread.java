@@ -2,7 +2,6 @@ package net.groster.moex.forts.drunkypenguin.core.fast;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.openfast.MessageHandler;
@@ -88,8 +87,7 @@ public class ConnectionThread extends Thread {
         LOGGER.info("stopped");
     }
 
-    @PreDestroy
-    public void preDestroy() {
+    public void stopConnection() {
         work = false;
         interrupt();
     }
