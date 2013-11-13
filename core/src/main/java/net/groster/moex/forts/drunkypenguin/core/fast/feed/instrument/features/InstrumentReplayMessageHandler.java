@@ -11,6 +11,9 @@ public class InstrumentReplayMessageHandler implements MessageHandler {
     @Override
     public void handleMessage(final Message message, final Context context, final Coder coder) {
         switch (MessageType.getById(message.getInt("templateId"))) {
+            case RESET:
+                context.reset();
+                break;
             default:
                 MessageType.logUnknownFASTMessage(message);
                 break;
