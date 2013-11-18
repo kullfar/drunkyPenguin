@@ -1,6 +1,7 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.config;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.annotation.PostConstruct;
@@ -14,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 @Named
 @Singleton
-public class Checker extends Thread {
+public class FASTConfigsUpdatesChecker extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Checker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FASTConfigsUpdatesChecker.class);
     public static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
     public static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
     private static final String START_CHECKING_LOG_STRING = "Checking for updates for {'configurationXmlFileName'='"
@@ -35,7 +36,7 @@ public class Checker extends Thread {
     private Long currentTemplateXmlTimestamp;
     private String currentTemplateXmlDateTimeString;
     @Resource
-    private Checker checker;
+    private FASTConfigsUpdatesChecker fastConfigsUpdatesChecker;
 
     @Override
     public void run() {
@@ -68,7 +69,7 @@ public class Checker extends Thread {
     @PreDestroy
     public void preDestroy() {
         continueWorking = false;
-        checker.interrupt();
+        fastConfigsUpdatesChecker.interrupt();
     }
 
     private void checkConfFile(final String xmlFileName, final long currentXmlTimestamp,
@@ -76,7 +77,10 @@ public class Checker extends Thread {
         LOGGER.info("Checking for '" + xmlFileName + "'.");
         try {
             final String remoteXmlFileUrl = fastConfURL + xmlFileName;
-            final long remoteFileTimestamp = new URL(remoteXmlFileUrl).openConnection().getLastModified();
+
+            final HttpURLConnection httpURLConnection = ((HttpURLConnection) new URL(remoteXmlFileUrl).openConnection());
+            httpURLConnection.setRequestMethod("HEAD");
+            final long remoteFileTimestamp = httpURLConnection.getLastModified();
             final StringBuilder logStatementBuilder = new StringBuilder("Local '").append(xmlFileName).append(
                     "' is from {'dt'='").append(currentXmlFileDateTimeString).append("', 'ts'='").append(
                             currentXmlTimestamp).append("'}, {'remote'='").append(remoteXmlFileUrl).append(

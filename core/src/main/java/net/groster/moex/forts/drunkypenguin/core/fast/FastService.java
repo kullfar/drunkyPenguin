@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.Configuration;
-import net.groster.moex.forts.drunkypenguin.core.fast.config.Checker;
+import net.groster.moex.forts.drunkypenguin.core.fast.config.FASTConfigsUpdatesChecker;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.FeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketDataGroup;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketID;
@@ -34,7 +34,7 @@ public class FastService {
     public void postConstruct() {
         LOGGER.info("Loading FAST templates.");
         final XMLMessageTemplateLoader xmlMessageTemplateLoader = new XMLMessageTemplateLoader();
-        try (InputStream templateSource = ClassLoader.getSystemResourceAsStream(Checker.TEMPLATES_XML_FILE_NAME)) {
+        try (InputStream templateSource = ClassLoader.getSystemResourceAsStream(FASTConfigsUpdatesChecker.TEMPLATES_XML_FILE_NAME)) {
             templates = xmlMessageTemplateLoader.load(templateSource);
             if (templates.length != MessageType.values().length) {
                 LOGGER.error("Wrong templates number. {'templates.length'='" + templates.length
@@ -49,7 +49,7 @@ public class FastService {
 
         LOGGER.info("Loading FAST configuration.");
         try (InputStream configurationSource = ClassLoader.
-                getSystemResourceAsStream(Checker.CONFIGURATION_XML_FILE_NAME)) {
+                getSystemResourceAsStream(FASTConfigsUpdatesChecker.CONFIGURATION_XML_FILE_NAME)) {
             final Unmarshaller unmarshaller = JAXBContext.newInstance(Configuration.class).createUnmarshaller();
             configuration = (Configuration) unmarshaller.unmarshal(configurationSource);
             LOGGER.info("Loaded FAST configuration successfully.");
