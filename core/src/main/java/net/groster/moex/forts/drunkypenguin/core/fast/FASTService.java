@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 
 @Named
 @Singleton
-public class FastService {
+public class FASTService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FastService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FASTService.class);
     private MessageTemplate[] templates;
     private Configuration configuration;
     @Inject

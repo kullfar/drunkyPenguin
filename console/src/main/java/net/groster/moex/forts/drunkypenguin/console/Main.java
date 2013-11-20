@@ -1,6 +1,6 @@
 package net.groster.moex.forts.drunkypenguin.console;
 
-import net.groster.moex.forts.drunkypenguin.core.fast.FastService;
+import net.groster.moex.forts.drunkypenguin.core.fast.FASTService;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.FASTConfigsUpdatesChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ public abstract class Main {
             final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring-core.xml");
             context.registerShutdownHook();
             context.getBean(FASTConfigsUpdatesChecker.class).start();
-            context.getBean(FastService.class).start();
+            context.getBean(FASTService.class).start();
         } catch (Throwable t) {
             LOGGER.error("All is bad", t);
             throw t;

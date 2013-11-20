@@ -35,8 +35,6 @@ public class FASTConfigsUpdatesChecker extends Thread {
     @Resource
     private Long currentTemplateXmlTimestamp;
     private String currentTemplateXmlDateTimeString;
-    @Resource
-    private FASTConfigsUpdatesChecker fastConfigsUpdatesChecker;
 
     @Override
     public void run() {
@@ -69,7 +67,7 @@ public class FASTConfigsUpdatesChecker extends Thread {
     @PreDestroy
     public void preDestroy() {
         continueWorking = false;
-        fastConfigsUpdatesChecker.interrupt();
+        interrupt();
     }
 
     private void checkConfFile(final String xmlFileName, final long currentXmlTimestamp,

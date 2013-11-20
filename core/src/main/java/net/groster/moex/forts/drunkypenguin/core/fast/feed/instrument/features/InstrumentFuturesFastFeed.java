@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import net.groster.moex.forts.drunkypenguin.core.fast.ConnectionThread;
-import net.groster.moex.forts.drunkypenguin.core.fast.FastService;
+import net.groster.moex.forts.drunkypenguin.core.fast.FASTService;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.Connection;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.FeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketDataGroup;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.BeanFactory;
 public class InstrumentFuturesFastFeed {
 
     @Inject
-    private FastService fastService;
+    private FASTService fastService;
     @Inject
     private BeanFactory beanFactory;
     private final Set<ConnectionThread> connectionThreads = new HashSet<>();

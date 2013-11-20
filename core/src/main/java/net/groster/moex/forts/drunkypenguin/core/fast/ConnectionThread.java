@@ -24,7 +24,7 @@ public class ConnectionThread extends Thread {
     private MulticastClientEndpoint multicastClientEndpoint;
     private MessageHandler messageHandler;
     @Inject
-    private FastService fastService;
+    private FASTService fastService;
 
     public void init(final String name, final MulticastClientEndpoint multicastClientEndpoint,
             final MessageHandler messageHandler) {
