@@ -2,17 +2,11 @@ package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-public class SecurityDefinition {
+public class SecurityDefinition extends AbstractFASTMessage {
 
-    private String applVerID;
-    private String messageType;
-    private String senderCompID;
-    private int msgSeqNum;
-    private DateTime sendingTime;
     private int totNumReports;
     private String symbol;
     private String securityDesc;
@@ -50,26 +44,6 @@ public class SecurityDefinition {
     private List<Event> evntGrp;
     private LocalDate maturityDate;
     private LocalTime maturityTime;
-
-    public void setApplVerID(final String applVerID) {
-        this.applVerID = applVerID;
-    }
-
-    public void setMessageType(final String messageType) {
-        this.messageType = messageType;
-    }
-
-    public void setSenderCompID(final String senderCompID) {
-        this.senderCompID = senderCompID;
-    }
-
-    public void setMsgSeqNum(final int msgSeqNum) {
-        this.msgSeqNum = msgSeqNum;
-    }
-
-    public void setSendingTime(final DateTime sendingTime) {
-        this.sendingTime = sendingTime;
-    }
 
     public void setTotNumReports(final int totNumReports) {
         this.totNumReports = totNumReports;
