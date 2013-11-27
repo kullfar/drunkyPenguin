@@ -1,6 +1,9 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 
+import net.groster.moex.forts.drunkypenguin.core.Constants;
+import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import org.joda.time.DateTime;
+import org.openfast.Message;
 
 public class AbstractFASTMessage {
 
@@ -10,24 +13,12 @@ public class AbstractFASTMessage {
     private DateTime sendingTime;
     private String applVerID;
 
-    public void setMsgSeqNum(final int msgSeqNum) {
-        this.msgSeqNum = msgSeqNum;
+    public void init(final Message fastMessage) {
+        msgSeqNum = fastMessage.getInt("MsgSeqNum");
+        messageType = fastMessage.getString("MessageType");
+        senderCompID = fastMessage.getString("SenderCompID");
+        sendingTime = MessageType.FAST_DATETIME_UTC_FORMATTER.parseDateTime(Long.toString(fastMessage.getLong(
+                "SendingTime"))).withZone(Constants.MOEX_TIME_ZONE);
+        applVerID = fastMessage.getString("ApplVerID");
     }
-
-    public void setMessageType(final String messageType) {
-        this.messageType = messageType;
-    }
-
-    public void setSenderCompID(final String senderCompID) {
-        this.senderCompID = senderCompID;
-    }
-
-    public void setSendingTime(final DateTime sendingTime) {
-        this.sendingTime = sendingTime;
-    }
-
-    public void setApplVerID(final String applVerID) {
-        this.applVerID = applVerID;
-    }
-
 }

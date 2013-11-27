@@ -1,7 +1,11 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import org.openfast.GroupValue;
+import org.openfast.Message;
+import org.openfast.ScalarValue;
 
 public class AbstractSecurityDefinition extends AbstractFASTMessage {
 
@@ -20,59 +24,49 @@ public class AbstractSecurityDefinition extends AbstractFASTMessage {
     private Integer securityTradingStatus;
     private List<MDFeedType> mdFeedTypes;
 
-    public void setSecurityID(final long securityID) {
-        this.securityID = securityID;
-    }
+    @Override
+    public void init(final Message fastMessage) {
+        super.init(fastMessage);
+        securityID = fastMessage.getLong("SecurityID");
+        securityIDSource = fastMessage.getInt("SecurityIDSource");
+        totNumReports = fastMessage.getInt("TotNumReports");
+        symbol = fastMessage.getString("Symbol");
+        securityDesc = fastMessage.getString("SecurityDesc");
+        cfiCode = fastMessage.getString("CFICode");
 
-    public void setSecurityIDSource(final int securityIDSource) {
-        this.securityIDSource = securityIDSource;
-    }
+        final ScalarValue minPriceIncrementScalarValue = fastMessage.getScalar("MinPriceIncrement");
+        minPriceIncrement = minPriceIncrementScalarValue == null ? null : minPriceIncrementScalarValue.toBigDecimal();
 
-    public void setTotNumReports(final int totNumReports) {
-        this.totNumReports = totNumReports;
-    }
+        currency = fastMessage.getString("Currency");
 
-    public void setSymbol(final String symbol) {
-        this.symbol = symbol;
-    }
+        final ScalarValue lowLimitPxScalarValue = fastMessage.getScalar("LowLimitPx");
+        lowLimitPx = lowLimitPxScalarValue == null ? null : lowLimitPxScalarValue.toBigDecimal();
 
-    public void setSecurityDesc(final String securityDesc) {
-        this.securityDesc = securityDesc;
-    }
+        final ScalarValue highLimitPxScalarValue = fastMessage.getScalar("HighLimitPx");
+        highLimitPx = highLimitPxScalarValue == null ? null : highLimitPxScalarValue.toBigDecimal();
 
-    public void setCfiCode(final String cfiCode) {
-        this.cfiCode = cfiCode;
-    }
+        marketSegmentID = fastMessage.getString("MarketSegmentID");
+        marketID = fastMessage.getString("MarketID");
 
-    public void setMinPriceIncrement(final BigDecimal minPriceIncrement) {
-        this.minPriceIncrement = minPriceIncrement;
-    }
+        final ScalarValue securityTradingStatusScalarValue = fastMessage.getScalar("SecurityTradingStatus");
+        securityTradingStatus = securityTradingStatusScalarValue == null ? null : securityTradingStatusScalarValue.
+                toInt();
 
-    public void setCurrency(final String currency) {
-        this.currency = currency;
-    }
+        final GroupValue[] mdFeedTypesArray = fastMessage.getSequence("MDFeedTypes").getValues();
+        final List<MDFeedType> mdFeedTypesList = new ArrayList<>(mdFeedTypesArray.length);
+        for (final GroupValue mdFeedTypeValue : mdFeedTypesArray) {
+            final MDFeedType mdFeedType = new MDFeedType();
 
-    public void setLowLimitPx(final BigDecimal lowLimitPx) {
-        this.lowLimitPx = lowLimitPx;
-    }
+            mdFeedType.setMdFeedType(mdFeedTypeValue.getString("MDFeedType"));
 
-    public void setHighLimitPx(final BigDecimal highLimitPx) {
-        this.highLimitPx = highLimitPx;
-    }
+            final ScalarValue MarketDepthScalarValue = mdFeedTypeValue.getScalar("MarketDepth");
+            mdFeedType.setMarketDepth(MarketDepthScalarValue == null ? null : MarketDepthScalarValue.toInt());
 
-    public void setMarketSegmentID(final String marketSegmentID) {
-        this.marketSegmentID = marketSegmentID;
-    }
+            final ScalarValue MDBookTypeScalarValue = mdFeedTypeValue.getScalar("MDBookType");
+            mdFeedType.setMdBookType(MDBookTypeScalarValue == null ? null : MDBookTypeScalarValue.toInt());
 
-    public void setMarketID(final String marketID) {
-        this.marketID = marketID;
-    }
-
-    public void setSecurityTradingStatus(final Integer securityTradingStatus) {
-        this.securityTradingStatus = securityTradingStatus;
-    }
-
-    public void setMdFeedTypes(final List<MDFeedType> mdFeedTypes) {
-        this.mdFeedTypes = mdFeedTypes;
+            mdFeedTypesList.add(mdFeedType);
+        }
+        mdFeedTypes = mdFeedTypesList;
     }
 }
