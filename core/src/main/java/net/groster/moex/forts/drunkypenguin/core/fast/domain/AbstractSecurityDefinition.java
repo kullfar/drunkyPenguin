@@ -19,8 +19,8 @@ public class AbstractSecurityDefinition extends AbstractFASTMessage {
     private String currency;
     private BigDecimal lowLimitPx;
     private BigDecimal highLimitPx;
-    private String marketSegmentID;
-    private String marketID;
+    private MarketSegmentID marketSegmentID;
+    private MarketID marketID;
     private Integer securityTradingStatus;
     private List<MDFeedType> mdFeedTypes;
 
@@ -45,8 +45,8 @@ public class AbstractSecurityDefinition extends AbstractFASTMessage {
         final ScalarValue highLimitPxScalarValue = fastMessage.getScalar("HighLimitPx");
         highLimitPx = highLimitPxScalarValue == null ? null : highLimitPxScalarValue.toBigDecimal();
 
-        marketSegmentID = fastMessage.getString("MarketSegmentID");
-        marketID = fastMessage.getString("MarketID");
+        marketSegmentID = MarketSegmentID.valueOf(fastMessage.getString("MarketSegmentID"));
+        marketID = MarketID.valueOf(fastMessage.getString("MarketID"));
 
         final ScalarValue securityTradingStatusScalarValue = fastMessage.getScalar("SecurityTradingStatus");
         securityTradingStatus = securityTradingStatusScalarValue == null ? null : securityTradingStatusScalarValue.

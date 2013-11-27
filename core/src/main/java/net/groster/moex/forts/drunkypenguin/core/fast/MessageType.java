@@ -10,6 +10,7 @@ import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentAttribute;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Underlying;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -33,7 +34,9 @@ public enum MessageType {
                     sd.init(fastMessage);
                     sd.setSecurityAltID(fastMessage.getString("SecurityAltID"));
                     sd.setSecurityAltIDSource(fastMessage.getString("SecurityAltIDSource"));
-                    sd.setSecurityType(fastMessage.getString("SecurityType"));
+
+                    final String securityTypeString = fastMessage.getString("SecurityType");
+                    sd.setSecurityType(securityTypeString == null ? null : SecurityType.valueOf(securityTypeString));
 
                     final ScalarValue strikePriceScalarValue = fastMessage.getScalar("StrikePrice");
                     sd.setStrikePrice(strikePriceScalarValue == null ? null : strikePriceScalarValue.toBigDecimal());

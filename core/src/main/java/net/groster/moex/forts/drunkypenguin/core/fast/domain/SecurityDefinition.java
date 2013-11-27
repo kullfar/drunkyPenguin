@@ -9,7 +9,7 @@ public class SecurityDefinition extends AbstractSecurityDefinition {
 
     private String securityAltID;
     private String securityAltIDSource;
-    private String securityType;
+    private SecurityType securityType;
     private BigDecimal strikePrice;
     private BigDecimal contractMultiplier;
     private Integer tradingSessionID;
@@ -39,7 +39,7 @@ public class SecurityDefinition extends AbstractSecurityDefinition {
         this.securityAltIDSource = securityAltIDSource;
     }
 
-    public void setSecurityType(final String securityType) {
+    public void setSecurityType(final SecurityType securityType) {
         this.securityType = securityType;
     }
 
