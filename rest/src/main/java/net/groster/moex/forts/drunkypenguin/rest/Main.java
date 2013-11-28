@@ -17,17 +17,16 @@ public abstract class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    private static final String BASE_URI = "http://localhost:9696/";
-
     public static void main(final String[] args) throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
         try {
-            final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring-core.xml");
+            final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("spring-rest.xml");
             context.registerShutdownHook();
+            final String restServiceBaseUri = (String) context.getBean("restServiceBaseUri");
 
-            final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI),
+            final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(restServiceBaseUri),
                     new ResourceConfig().register(StatusResource.class));
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -38,7 +37,7 @@ public abstract class Main {
                     LOGGER.info("Grizzly server with Jersey app was stopped");
                 }
             });
-            LOGGER.info("Jersey app started with WADL available at " + BASE_URI + "application.wadl");
+            LOGGER.info("Jersey app started with WADL available at " + restServiceBaseUri + "application.wadl");
 
             context.getBean(FASTConfigsUpdatesChecker.class).start();
             context.getBean(FASTService.class).start();
