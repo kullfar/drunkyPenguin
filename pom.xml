@@ -11,6 +11,7 @@
     <modules>
         <module>core</module>
         <module>console</module>
+        <module>rest</module>
     </modules>
 
     <name>drunkyPenguin</name>

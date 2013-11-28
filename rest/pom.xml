@@ -11,11 +11,11 @@
     </parent>
 
     <groupId>net.groster.moex.forts.drunkypenguin</groupId>
-    <artifactId>console</artifactId>
+    <artifactId>rest</artifactId>
     <packaging>jar</packaging>
 
-    <name>drunkyPenguin console application</name>
-    <description>Console Application of java platform for trading on FORTS via FIX/FAST gates</description>
+    <name>drunkyPenguin REST service application</name>
+    <description>REST service Application of java platform for trading on FORTS via FIX/FAST gates</description>
     <dependencies>
         <dependency>
             <groupId>net.groster.moex.forts.drunkypenguin</groupId>
@@ -23,18 +23,27 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>2.4.1</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                    <artifactId>javax.inject</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
             <plugin>
@@ -44,7 +53,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>net.groster.moex.forts.drunkypenguin.console.Main</mainClass>
+                            <mainClass>net.groster.moex.forts.drunkypenguin.rest.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -64,10 +73,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
         </plugins>
