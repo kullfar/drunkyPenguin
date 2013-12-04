@@ -1,3 +1,4 @@
 target
 logs
 dependency-reduced-pom.xml
+nbactions.xml

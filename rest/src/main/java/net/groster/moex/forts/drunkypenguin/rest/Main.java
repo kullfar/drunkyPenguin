@@ -1,5 +1,6 @@
 package net.groster.moex.forts.drunkypenguin.rest;
 
+import net.groster.moex.forts.drunkypenguin.rest.status.StatusResource;
 import java.io.IOException;
 import java.net.URI;
 import javax.annotation.PostConstruct;
