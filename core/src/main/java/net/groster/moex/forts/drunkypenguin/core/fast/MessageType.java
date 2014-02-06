@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.SequenceReset;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,8 +31,8 @@ public enum MessageType {
     HEARTBEAT("Heartbeat"),
     SEQUENCE_RESET("SequenceReset") {
                 @Override
-                public SecurityDefinition parseFASTMessage(final Message fastMessage) {
-                    return new SecurityDefinition(fastMessage);
+                public SequenceReset parseFASTMessage(final Message fastMessage) {
+                    return new SequenceReset(fastMessage);
                 }
             },
     RESET("Reset"),
