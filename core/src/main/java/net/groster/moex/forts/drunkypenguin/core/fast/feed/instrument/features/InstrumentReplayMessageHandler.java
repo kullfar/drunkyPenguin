@@ -2,6 +2,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features;
 
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.SequenceReset;
 import org.openfast.Context;
 import org.openfast.Message;
 import org.openfast.MessageHandler;
@@ -23,6 +24,10 @@ public class InstrumentReplayMessageHandler implements MessageHandler {
             case SECURITY_DEFINITION:
                 final SecurityDefinition sd = (SecurityDefinition) messageType.parseFASTMessage(message);
                 LOGGER.info("got another one SecurityDefinition");
+                break;
+            case SEQUENCE_RESET:
+                final SequenceReset sr = (SequenceReset) messageType.parseFASTMessage(message);
+                LOGGER.info("got SequenceReset");
                 break;
             default:
                 MessageType.logUnknownFASTMessage(message);

@@ -1,125 +1,166 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import net.groster.moex.forts.drunkypenguin.core.Constants;
+import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.openfast.GroupValue;
+import org.openfast.Message;
+import org.openfast.ScalarValue;
+import org.openfast.SequenceValue;
 
 public class SecurityDefinition extends AbstractSecurityDefinition {
 
-    private String securityAltID;
-    private String securityAltIDSource;
-    private SecurityType securityType;
-    private BigDecimal strikePrice;
-    private BigDecimal contractMultiplier;
-    private Integer tradingSessionID;
-    private Integer exchangeTradingSessionID;
-    private BigDecimal volatility;
+    private final String securityAltID;
+    private final String securityAltIDSource;
+    private final SecurityType securityType;
+    private final BigDecimal strikePrice;
+    private final BigDecimal contractMultiplier;
+    private final Integer tradingSessionID;
+    private final Integer exchangeTradingSessionID;
+    private final BigDecimal volatility;
     private List<Underlying> underlyings;
-    private BigDecimal minPriceIncrementAmount;
-    private BigDecimal initialMarginOnBuy;
-    private BigDecimal initialMarginOnSell;
-    private BigDecimal initialMarginSyntetic;
-    private String quotationList;
-    private BigDecimal theorPrice;
-    private BigDecimal theorPriceLimit;
+    private final BigDecimal minPriceIncrementAmount;
+    private final BigDecimal initialMarginOnBuy;
+    private final BigDecimal initialMarginOnSell;
+    private final BigDecimal initialMarginSyntetic;
+    private final String quotationList;
+    private final BigDecimal theorPrice;
+    private final BigDecimal theorPriceLimit;
     private List<InstrumentLeg> instrumentLegs;
     private List<InstrumentAttribute> instrumentAttributes;
-    private BigDecimal underlyingQty;
-    private String underlyingCurrency;
+    private final BigDecimal underlyingQty;
+    private final String underlyingCurrency;
     private List<Event> evntGrp;
-    private LocalDate maturityDate;
-    private LocalTime maturityTime;
+    private final LocalDate maturityDate;
+    private final LocalTime maturityTime;
 
-    public void setSecurityAltID(final String securityAltID) {
-        this.securityAltID = securityAltID;
-    }
+    public SecurityDefinition(final Message fastMessage) {
+        super(fastMessage);
+        securityAltID = fastMessage.getString("SecurityAltID");
+        securityAltIDSource = fastMessage.getString("SecurityAltIDSource");
 
-    public void setSecurityAltIDSource(final String securityAltIDSource) {
-        this.securityAltIDSource = securityAltIDSource;
-    }
+        final String securityTypeString = fastMessage.getString("SecurityType");
+        securityType = securityTypeString == null ? null : SecurityType.valueOf(securityTypeString);
 
-    public void setSecurityType(final SecurityType securityType) {
-        this.securityType = securityType;
-    }
+        final ScalarValue strikePriceScalarValue = fastMessage.getScalar("StrikePrice");
+        strikePrice = strikePriceScalarValue == null ? null : strikePriceScalarValue.toBigDecimal();
 
-    public void setStrikePrice(final BigDecimal strikePrice) {
-        this.strikePrice = strikePrice;
-    }
+        final ScalarValue contractMultiplierScalarValue = fastMessage.getScalar("ContractMultiplier");
+        contractMultiplier = contractMultiplierScalarValue == null ? null : contractMultiplierScalarValue.toBigDecimal();
 
-    public void setContractMultiplier(final BigDecimal contractMultiplier) {
-        this.contractMultiplier = contractMultiplier;
-    }
+        final ScalarValue tradingSessionIDScalarValue = fastMessage.getScalar("TradingSessionID");
+        tradingSessionID = tradingSessionIDScalarValue == null ? null : tradingSessionIDScalarValue.toInt();
 
-    public void setTradingSessionID(final Integer tradingSessionID) {
-        this.tradingSessionID = tradingSessionID;
-    }
+        final ScalarValue exchangeTradingSessionIDScalarValue = fastMessage.getScalar("ExchangeTradingSessionID");
+        exchangeTradingSessionID = exchangeTradingSessionIDScalarValue == null ? null
+                : exchangeTradingSessionIDScalarValue.toInt();
 
-    public void setExchangeTradingSessionID(final Integer exchangeTradingSessionID) {
-        this.exchangeTradingSessionID = exchangeTradingSessionID;
-    }
+        final ScalarValue volatilityScalarValue = fastMessage.getScalar("Volatility");
+        volatility = volatilityScalarValue == null ? null : volatilityScalarValue.toBigDecimal();
 
-    public void setVolatility(final BigDecimal volatility) {
-        this.volatility = volatility;
-    }
+        final SequenceValue underlyingsSequenceValue = fastMessage.getSequence("Underlyings");
+        if (underlyingsSequenceValue != null) {
+            final GroupValue[] underlyingsArray = underlyingsSequenceValue.getValues();
+            final List<Underlying> underlyingsList = new ArrayList<>(underlyingsArray.length);
+            for (final GroupValue underlyingValue : underlyingsArray) {
+                final Underlying underlying = new Underlying();
+                underlying.setUnderlyingSymbol(underlyingValue.getString("UnderlyingSymbol"));
 
-    public void setUnderlying(final List<Underlying> underlying) {
-        this.underlyings = underlying;
-    }
+                final ScalarValue underlyingSecurityIDScalarValue = underlyingValue.getScalar(
+                        "UnderlyingSecurityID");
+                underlying.setUnderlyingSecurityID(underlyingSecurityIDScalarValue == null ? null
+                        : underlyingSecurityIDScalarValue.toLong());
 
-    public void setMinPriceIncrementAmount(final BigDecimal minPriceIncrementAmount) {
-        this.minPriceIncrementAmount = minPriceIncrementAmount;
-    }
+                underlyingsList.add(underlying);
+            }
+            underlyings = underlyingsList;
+        }
 
-    public void setInitialMarginOnBuy(final BigDecimal initialMarginOnBuy) {
-        this.initialMarginOnBuy = initialMarginOnBuy;
-    }
+        final ScalarValue minPriceIncrementAmountScalarValue = fastMessage.getScalar(
+                "MinPriceIncrementAmount");
+        minPriceIncrementAmount = minPriceIncrementAmountScalarValue == null ? null
+                : minPriceIncrementAmountScalarValue.toBigDecimal();
 
-    public void setInitialMarginOnSell(final BigDecimal initialMarginOnSell) {
-        this.initialMarginOnSell = initialMarginOnSell;
-    }
+        final ScalarValue initialMarginOnBuyScalarValue = fastMessage.getScalar("InitialMarginOnBuy");
+        initialMarginOnBuy = initialMarginOnBuyScalarValue == null ? null : initialMarginOnBuyScalarValue.toBigDecimal();
 
-    public void setInitialMarginSyntetic(final BigDecimal initialMarginSyntetic) {
-        this.initialMarginSyntetic = initialMarginSyntetic;
-    }
+        final ScalarValue initialMarginOnSellScalarValue = fastMessage.getScalar("InitialMarginOnSell");
+        initialMarginOnSell = initialMarginOnSellScalarValue == null ? null : initialMarginOnSellScalarValue.
+                toBigDecimal();
 
-    public void setQuotationList(final String quotationList) {
-        this.quotationList = quotationList;
-    }
+        final ScalarValue initialMarginSynteticScalarValue = fastMessage.getScalar("InitialMarginSyntetic");
+        initialMarginSyntetic = initialMarginSynteticScalarValue == null ? null : initialMarginSynteticScalarValue.
+                toBigDecimal();
 
-    public void setTheorPrice(final BigDecimal theorPrice) {
-        this.theorPrice = theorPrice;
-    }
+        quotationList = fastMessage.getString("QuotationList");
 
-    public void setTheorPriceLimit(final BigDecimal theorPriceLimit) {
-        this.theorPriceLimit = theorPriceLimit;
-    }
+        final ScalarValue theorPriceScalarValue = fastMessage.getScalar("TheorPrice");
+        theorPrice = theorPriceScalarValue == null ? null : theorPriceScalarValue.toBigDecimal();
 
-    public void setInstrumentLegs(final List<InstrumentLeg> instrumentLegs) {
-        this.instrumentLegs = instrumentLegs;
-    }
+        final ScalarValue theorPriceLimitScalarValue = fastMessage.getScalar("TheorPriceLimit");
+        theorPriceLimit = theorPriceLimitScalarValue == null ? null : theorPriceLimitScalarValue.toBigDecimal();
 
-    public void setInstrumentAttributes(final List<InstrumentAttribute> instrumentAttributes) {
-        this.instrumentAttributes = instrumentAttributes;
-    }
+        final SequenceValue instrumentLegsSequenceValue = fastMessage.getSequence("InstrumentLegs");
+        if (instrumentLegsSequenceValue != null) {
+            final GroupValue[] instrumentLegsArray = instrumentLegsSequenceValue.getValues();
+            final List<InstrumentLeg> instrumentLegsList = new ArrayList<>(instrumentLegsArray.length);
+            for (final GroupValue instrumentLegValue : instrumentLegsArray) {
+                final InstrumentLeg instrumentLeg = new InstrumentLeg();
+                instrumentLeg.setLegSymbol(instrumentLegValue.getString("LegSymbol"));
+                instrumentLeg.setLegSecurityID(instrumentLegValue.getLong("LegSecurityID"));
+                instrumentLeg.setLegRatioQty(instrumentLegValue.getBigDecimal("LegRatioQty"));
+                instrumentLegsList.add(instrumentLeg);
+            }
+            instrumentLegs = instrumentLegsList;
+        }
 
-    public void setUnderlyingQty(final BigDecimal underlyingQty) {
-        this.underlyingQty = underlyingQty;
-    }
+        final SequenceValue instrumentAttributesSequenceValue = fastMessage.getSequence(
+                "InstrumentAttributes");
+        if (instrumentAttributesSequenceValue != null) {
+            final GroupValue[] instrumentAttributesArray = instrumentAttributesSequenceValue.getValues();
+            final List<InstrumentAttribute> instrumentAttributesList = new ArrayList<>(
+                    instrumentAttributesArray.length);
+            for (final GroupValue instrumentAttributeValue : instrumentAttributesArray) {
+                final InstrumentAttribute instrumentAttribute = new InstrumentAttribute();
+                instrumentAttribute.setInstrAttribType(instrumentAttributeValue.getInt("InstrAttribType"));
+                instrumentAttribute.setInstrAttribValue(instrumentAttributeValue.getString(
+                        "InstrAttribValue"));
+                instrumentAttributesList.add(instrumentAttribute);
+            }
+            instrumentAttributes = instrumentAttributesList;
+        }
 
-    public void setUnderlyingCurrency(final String underlyingCurrency) {
-        this.underlyingCurrency = underlyingCurrency;
-    }
+        final ScalarValue underlyingQtyValue = fastMessage.getScalar("UnderlyingQty");
+        underlyingQty = underlyingQtyValue == null ? null : underlyingQtyValue.toBigDecimal();
 
-    public void setEvntGrp(final List<Event> evntGrp) {
-        this.evntGrp = evntGrp;
-    }
+        underlyingCurrency = fastMessage.getString("UnderlyingCurrency");
 
-    public void setMaturityDate(final LocalDate maturityDate) {
-        this.maturityDate = maturityDate;
-    }
+        final SequenceValue evntGrpSequenceValue = fastMessage.getSequence("EvntGrp");
+        if (evntGrpSequenceValue != null) {
+            final GroupValue[] eventsArray = evntGrpSequenceValue.getValues();
+            final List<Event> events = new ArrayList<>(eventsArray.length);
+            for (final GroupValue eventValue : eventsArray) {
+                final Event event = new Event();
+                event.setEventType(eventValue.getInt("EventType"));
+                event.setEventDate(MessageType.FAST_DATE_UTC_FORMATTER.parseDateTime(Integer.toString(eventValue.getInt(
+                        "EventDate"))).withZone(Constants.MOEX_TIME_ZONE).toLocalDate());
+                event.setEventTime(MessageType.FAST_DATETIME_UTC_FORMATTER.parseDateTime(Long.toString(eventValue.
+                        getLong("EventTime"))).withZone(Constants.MOEX_TIME_ZONE));
+                events.add(event);
+            }
+            evntGrp = events;
+        }
 
-    public void setMaturityTime(final LocalTime maturityTime) {
-        this.maturityTime = maturityTime;
+        final ScalarValue maturityDateScalarValue = fastMessage.getScalar("MaturityDate");
+        maturityDate = maturityDateScalarValue == null ? null : MessageType.FAST_DATE_UTC_FORMATTER.parseDateTime(
+                Integer.toString(maturityDateScalarValue.toInt())).withZone(Constants.MOEX_TIME_ZONE).toLocalDate();
+
+        final ScalarValue maturityTimeScalarValue = fastMessage.getScalar("MaturityTime");
+        maturityTime = maturityTimeScalarValue == null ? null : MessageType.FAST_TIME_UTC_FORMATTER.parseDateTime(
+                Integer.toString(maturityTimeScalarValue.toInt())).withZone(Constants.MOEX_TIME_ZONE).toLocalTime();
     }
 }

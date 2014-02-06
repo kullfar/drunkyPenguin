@@ -7,26 +7,25 @@ import org.openfast.GroupValue;
 import org.openfast.Message;
 import org.openfast.ScalarValue;
 
-public class AbstractSecurityDefinition extends AbstractFASTMessage {
+public abstract class AbstractSecurityDefinition extends AbstractFASTMessage {
 
-    private long securityID;
-    private int securityIDSource;
-    private int totNumReports;
-    private String symbol;
-    private String securityDesc;
-    private String cfiCode;
-    private BigDecimal minPriceIncrement;
-    private String currency;
-    private BigDecimal lowLimitPx;
-    private BigDecimal highLimitPx;
-    private MarketSegmentID marketSegmentID;
-    private MarketID marketID;
-    private Integer securityTradingStatus;
-    private List<MDFeedType> mdFeedTypes;
+    private final long securityID;
+    private final int securityIDSource;
+    private final int totNumReports;
+    private final String symbol;
+    private final String securityDesc;
+    private final String cfiCode;
+    private final BigDecimal minPriceIncrement;
+    private final String currency;
+    private final BigDecimal lowLimitPx;
+    private final BigDecimal highLimitPx;
+    private final MarketSegmentID marketSegmentID;
+    private final MarketID marketID;
+    private final Integer securityTradingStatus;
+    private final List<MDFeedType> mdFeedTypes;
 
-    @Override
-    public void init(final Message fastMessage) {
-        super.init(fastMessage);
+    public AbstractSecurityDefinition(final Message fastMessage) {
+        super(fastMessage);
         securityID = fastMessage.getLong("SecurityID");
         securityIDSource = fastMessage.getInt("SecurityIDSource");
         totNumReports = fastMessage.getInt("TotNumReports");

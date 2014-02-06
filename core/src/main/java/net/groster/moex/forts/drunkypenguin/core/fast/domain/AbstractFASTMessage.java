@@ -5,15 +5,15 @@ import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import org.joda.time.DateTime;
 import org.openfast.Message;
 
-public class AbstractFASTMessage {
+public abstract class AbstractFASTMessage {
 
-    private int msgSeqNum;
-    private String messageType;
-    private String senderCompID;
-    private DateTime sendingTime;
-    private String applVerID;
+    private final int msgSeqNum;
+    private final String messageType;
+    private final String senderCompID;
+    private final DateTime sendingTime;
+    private final String applVerID;
 
-    public void init(final Message fastMessage) {
+    public AbstractFASTMessage(final Message fastMessage) {
         msgSeqNum = fastMessage.getInt("MsgSeqNum");
         messageType = fastMessage.getString("MessageType");
         senderCompID = fastMessage.getString("SenderCompID");
