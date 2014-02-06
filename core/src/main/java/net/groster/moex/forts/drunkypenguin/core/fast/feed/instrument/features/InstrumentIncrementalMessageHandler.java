@@ -14,6 +14,8 @@ public class InstrumentIncrementalMessageHandler implements MessageHandler {
             case RESET:
                 context.reset();
                 break;
+            case HEARTBEAT:
+                break;
             default:
                 MessageType.logUnknownFASTMessage(message);
                 break;

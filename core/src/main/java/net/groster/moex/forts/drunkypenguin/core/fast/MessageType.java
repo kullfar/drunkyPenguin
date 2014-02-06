@@ -3,6 +3,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.Heartbeat;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SequenceReset;
 import org.joda.time.DateTimeZone;
@@ -28,7 +29,12 @@ public enum MessageType {
             },
     SECURITY_DEFINITION_UPDATE_REPORT("SecurityDefinitionUpdateReport"),
     SECURITY_STATUS("SecurityStatus"),
-    HEARTBEAT("Heartbeat"),
+    HEARTBEAT("Heartbeat") {
+                @Override
+                public Heartbeat parseFASTMessage(final Message fastMessage) {
+                    return new Heartbeat(fastMessage);
+                }
+            },
     SEQUENCE_RESET("SequenceReset") {
                 @Override
                 public SequenceReset parseFASTMessage(final Message fastMessage) {
