@@ -9,11 +9,11 @@
     <context:component-scan base-package="net.groster.moex.forts.drunkypenguin.core"/>
 
     <bean id="currentConfigurationXmlTimestamp" class="java.lang.Long">
-        <constructor-arg type="long" value="1382349687000"/>
+        <constructor-arg type="long" value="1397847787000"/>
     </bean>
 
     <bean id="currentTemplateXmlTimestamp" class="java.lang.Long">
-        <constructor-arg type="long" value="1381999139000"/>
+        <constructor-arg type="long" value="1397847787000"/>
     </bean>
 
     <bean id="fastConfURL" class="java.lang.String">

@@ -16,7 +16,7 @@ import org.openfast.MessageHandler;
 import org.openfast.session.multicast.MulticastClientEndpoint;
 import org.springframework.beans.factory.BeanFactory;
 
-//<MarketDataGroup feedType="RTS-INSTR" marketID="F" label="All Futures/Stocks defintion">
+//<MarketDataGroup feedType="RTS-INSTR" marketID="F" label="All Futures defintion">
 @Named
 @Singleton
 public class InstrumentFuturesFastFeed {

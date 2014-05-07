@@ -3,7 +3,7 @@
     <!--
        The most complete Incremental refresh template
    -->
-    <template name="DefaultIncrementalRefreshMessage" id="74" dictionary="74">
+    <template name="DefaultIncrementalRefreshMessage" id="80" dictionary="80">
         <string name="ApplVerID" id="1128">
             <constant value="8"/>
         </string>
@@ -37,6 +37,9 @@
             <string name="Symbol" id="55" presence="optional">
                 <copy/>
             </string>
+            <string name="SecurityGroup" id="1151" presence="optional">
+                <copy/>
+            </string>
             <uInt32 name="ExchangeTradingSessionID" id="5842" presence="optional">
                 <copy/>
             </uInt32>
@@ -66,13 +69,16 @@
             <int32 name="TrdType" id="828" presence="optional"/>
             <decimal name="LastPx" id="31" presence="optional"/>
             <int32 name="MDFlags" id="20017" presence="optional"/>
+            <string name="Currency" id="15" presence="optional">
+                <copy/>
+            </string>
         </sequence>
     </template>
 
     <!--
        The most complete Snapshot template
    -->
-    <template name="DefaultSnapshotMessage" id="75" dictionary="75">
+    <template name="DefaultSnapshotMessage" id="81" dictionary="81">
         <string name="ApplVerID" id="1128">
             <constant value="8"/>
         </string>
@@ -98,6 +104,9 @@
             <constant value="8"/>
         </uInt32>
         <string name="Symbol" id="55" presence="optional"/>
+        <string name="SecurityGroup" id="1151" presence="optional">
+            <copy/>
+        </string>
 
         <sequence name="MDEntries">
             <length name="NoMDEntries" id="268"/>
@@ -131,6 +140,9 @@
             <string name="MDEntryTradeType" id="20003" presence="optional"/>
             <int32 name="TrdType" id="828" presence="optional"/>
             <int32 name="MDFlags" id="20017" presence="optional"/>
+            <string name="Currency" id="15" presence="optional">
+                <copy/>
+            </string>
         </sequence>
     </template>
 
