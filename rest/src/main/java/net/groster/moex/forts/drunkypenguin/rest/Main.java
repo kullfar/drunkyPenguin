@@ -1,6 +1,5 @@
 package net.groster.moex.forts.drunkypenguin.rest;
 
-import net.groster.moex.forts.drunkypenguin.rest.status.StatusResource;
 import java.io.IOException;
 import java.net.URI;
 import javax.annotation.PostConstruct;
@@ -10,6 +9,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import net.groster.moex.forts.drunkypenguin.core.fast.FASTService;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.FASTConfigsUpdatesChecker;
+import net.groster.moex.forts.drunkypenguin.rest.status.StatusResource;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -56,7 +56,7 @@ public class Main {
                 @Override
                 public void run() {
                     LOGGER.info("Grizzly server with Jersey app is stopping");
-                    server.stop();
+                    server.shutdownNow();
                     LOGGER.info("Grizzly server with Jersey app was stopped");
                 }
             });
