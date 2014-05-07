@@ -82,8 +82,19 @@ public class FASTConfigsUpdatesChecker extends Thread {
             final HttpURLConnection httpURLConnection = ((HttpURLConnection) new URL(remoteXmlFileUrl).openConnection());
             httpURLConnection.setRequestMethod("HEAD");
             final long remoteFileTimestamp = httpURLConnection.getLastModified();
-            final DateTime remoteFileDateTime = new DateTime(remoteFileTimestamp);
-            final boolean uptodate = currentXmlTimestamp >= remoteFileTimestamp;
+
+            final DateTime remoteFileDateTime;
+            final boolean uptodate;
+
+            if (remoteFileTimestamp == 0) {
+                LOGGER.error("{'url'='" + remoteXmlFileUrl + "'} returned {'responseCode'='" + httpURLConnection.getResponseCode() + "'}.");
+                remoteFileDateTime = null;
+                uptodate = false;
+            } else {
+                remoteFileDateTime = new DateTime(remoteFileTimestamp);
+                uptodate = currentXmlTimestamp >= remoteFileTimestamp;
+            }
+
             synchronized (configFileUptodateState) {
                 configFileUptodateState.setRemoteFileDateTime(remoteFileDateTime);
                 configFileUptodateState.setLastCheckFinishedDateTime(DateTime.now());
@@ -95,11 +106,11 @@ public class FASTConfigsUpdatesChecker extends Thread {
                             currentXmlTimestamp).append("'}, {'remote'='").append(remoteXmlFileUrl).append(
                             "'} is from {'dt'='").append(remoteFileDateTime).append("', 'ts'='").append(
                             remoteFileTimestamp).append("'}. Local file is ");
-            if (remoteFileTimestamp > currentXmlTimestamp) {
+            if (uptodate) {
+                LOGGER.info(logStatementBuilder.append("newer, no need to do anything.").toString());
+            } else {
                 LOGGER.error(logStatementBuilder.append(
                         "older, need to download new one. And update drunkyPenguin version.").toString());
-            } else {
-                LOGGER.info(logStatementBuilder.append("newer, no need to do anything.").toString());
             }
         } catch (MalformedURLException mURLE) {
             LOGGER.error("{'fastConfURL'='" + fastConfURL + "'} is invalid.", mURLE);
