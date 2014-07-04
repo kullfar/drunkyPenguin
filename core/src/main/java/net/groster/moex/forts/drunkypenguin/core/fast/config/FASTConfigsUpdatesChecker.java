@@ -20,11 +20,6 @@ public class FASTConfigsUpdatesChecker extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(FASTConfigsUpdatesChecker.class);
     public static final String CONFIGURATION_XML_FILE_NAME = "configuration.xml";
     public static final String TEMPLATES_XML_FILE_NAME = "templates.xml";
-    private static final String START_CHECKING_LOG_STRING = "Checking for updates for {'configurationXmlFileName'='"
-            + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
-    private static final String FINISH_CHECKING_LOG_STRING
-            = "Finished checking for updates for {'configurationXmlFileName'='"
-            + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.";
     private static final int PERIOD = 86_400_000; //daily
     private volatile boolean continueWorking = true;
     @Resource
@@ -41,7 +36,8 @@ public class FASTConfigsUpdatesChecker extends Thread {
     @Override
     public void run() {
         while (continueWorking) {
-            LOGGER.info(START_CHECKING_LOG_STRING);
+            LOGGER.info("Checking for updates for {'configurationXmlFileName'='"
+                    + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.");
             try {
                 checkConfFile(CONFIGURATION_XML_FILE_NAME, currentConfigurationXmlTimestamp,
                         currentConfigurationXmlDateTimeString, configurationXmlUptodateState);
@@ -51,7 +47,8 @@ public class FASTConfigsUpdatesChecker extends Thread {
                 LOGGER.error("Smth wrong.", iOE);
             }
 
-            LOGGER.info(FINISH_CHECKING_LOG_STRING);
+            LOGGER.info("Finished checking for updates for {'configurationXmlFileName'='"
+                    + CONFIGURATION_XML_FILE_NAME + "', 'templatesXmlFileName'='" + TEMPLATES_XML_FILE_NAME + "'}.");
             try {
                 Thread.sleep(PERIOD);
             } catch (InterruptedException iE) {
