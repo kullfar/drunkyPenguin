@@ -68,4 +68,12 @@ public abstract class AbstractSecurityDefinition extends AbstractFASTMessage {
         }
         mdFeedTypes = mdFeedTypesList;
     }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public int getTotNumReports() {
+        return totNumReports;
+    }
 }
