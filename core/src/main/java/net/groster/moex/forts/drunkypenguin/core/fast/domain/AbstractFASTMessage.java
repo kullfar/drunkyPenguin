@@ -21,4 +21,25 @@ public abstract class AbstractFASTMessage {
                 "SendingTime"))).withZone(Constants.MOEX_TIME_ZONE);
         applVerID = fastMessage.getString("ApplVerID");
     }
+
+    public int getMsgSeqNum() {
+        return msgSeqNum;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public String getSenderCompID() {
+        return senderCompID;
+    }
+
+    public DateTime getSendingTime() {
+        return sendingTime;
+    }
+
+    public String getApplVerID() {
+        return applVerID;
+    }
+
 }

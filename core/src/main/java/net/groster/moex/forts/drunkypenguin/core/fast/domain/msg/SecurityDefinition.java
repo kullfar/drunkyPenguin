@@ -1,16 +1,20 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.domain.msg;
 
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.SecurityType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import net.groster.moex.forts.drunkypenguin.core.Constants;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractSecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.FuturesSecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentAttribute;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.MDFeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Underlying;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketID;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketSegmentID;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.SecurityType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.openfast.GroupValue;
@@ -18,8 +22,22 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 import org.openfast.SequenceValue;
 
-public class SecurityDefinition extends AbstractSecurityDefinition {
+public class SecurityDefinition extends AbstractFASTMessage implements FuturesSecurityDefinition {
 
+    private final long securityID;
+    private final int securityIDSource;
+    private final int totNumReports;
+    private final String symbol;
+    private final String securityDesc;
+    private final String cfiCode;
+    private final BigDecimal minPriceIncrement;
+    private final String currency;
+    private final BigDecimal lowLimitPx;
+    private final BigDecimal highLimitPx;
+    private final MarketSegmentID marketSegmentID;
+    private final MarketID marketID;
+    private final Integer securityTradingStatus;
+    private final List<MDFeedType> mdFeedTypes;
     private final String securityAltID;
     private final String securityAltIDSource;
     private final SecurityType securityType;
@@ -46,6 +64,47 @@ public class SecurityDefinition extends AbstractSecurityDefinition {
 
     public SecurityDefinition(final Message fastMessage) {
         super(fastMessage);
+        securityID = fastMessage.getLong("SecurityID");
+        securityIDSource = fastMessage.getInt("SecurityIDSource");
+        totNumReports = fastMessage.getInt("TotNumReports");
+        symbol = fastMessage.getString("Symbol");
+        securityDesc = fastMessage.getString("SecurityDesc");
+        cfiCode = fastMessage.getString("CFICode");
+
+        final ScalarValue minPriceIncrementScalarValue = fastMessage.getScalar("MinPriceIncrement");
+        minPriceIncrement = minPriceIncrementScalarValue == null ? null : minPriceIncrementScalarValue.toBigDecimal();
+
+        currency = fastMessage.getString("Currency");
+
+        final ScalarValue lowLimitPxScalarValue = fastMessage.getScalar("LowLimitPx");
+        lowLimitPx = lowLimitPxScalarValue == null ? null : lowLimitPxScalarValue.toBigDecimal();
+
+        final ScalarValue highLimitPxScalarValue = fastMessage.getScalar("HighLimitPx");
+        highLimitPx = highLimitPxScalarValue == null ? null : highLimitPxScalarValue.toBigDecimal();
+
+        marketSegmentID = MarketSegmentID.valueOf(fastMessage.getString("MarketSegmentID"));
+        marketID = MarketID.valueOf(fastMessage.getString("MarketID"));
+
+        final ScalarValue securityTradingStatusScalarValue = fastMessage.getScalar("SecurityTradingStatus");
+        securityTradingStatus = securityTradingStatusScalarValue == null ? null : securityTradingStatusScalarValue.
+                toInt();
+
+        final GroupValue[] mdFeedTypesArray = fastMessage.getSequence("MDFeedTypes").getValues();
+        final List<MDFeedType> mdFeedTypesList = new ArrayList<>(mdFeedTypesArray.length);
+        for (final GroupValue mdFeedTypeValue : mdFeedTypesArray) {
+            final MDFeedType mdFeedType = new MDFeedType();
+
+            mdFeedType.setMdFeedType(mdFeedTypeValue.getString("MDFeedType"));
+
+            final ScalarValue MarketDepthScalarValue = mdFeedTypeValue.getScalar("MarketDepth");
+            mdFeedType.setMarketDepth(MarketDepthScalarValue == null ? null : MarketDepthScalarValue.toInt());
+
+            final ScalarValue MDBookTypeScalarValue = mdFeedTypeValue.getScalar("MDBookType");
+            mdFeedType.setMdBookType(MDBookTypeScalarValue == null ? null : MDBookTypeScalarValue.toInt());
+
+            mdFeedTypesList.add(mdFeedType);
+        }
+        mdFeedTypes = mdFeedTypesList;
         securityAltID = fastMessage.getString("SecurityAltID");
         securityAltIDSource = fastMessage.getString("SecurityAltIDSource");
 
@@ -169,4 +228,190 @@ public class SecurityDefinition extends AbstractSecurityDefinition {
         maturityTime = maturityTimeScalarValue == null ? null : MessageType.FAST_TIME_UTC_FORMATTER.parseDateTime(
                 Integer.toString(maturityTimeScalarValue.toInt())).withZone(Constants.MOEX_TIME_ZONE).toLocalTime();
     }
+
+    @Override
+    public long getSecurityID() {
+        return securityID;
+    }
+
+    @Override
+    public int getSecurityIDSource() {
+        return securityIDSource;
+    }
+
+    @Override
+    public int getTotNumReports() {
+        return totNumReports;
+    }
+
+    @Override
+    public String getSymbol() {
+        return symbol;
+    }
+
+    @Override
+    public String getSecurityDesc() {
+        return securityDesc;
+    }
+
+    @Override
+    public String getCfiCode() {
+        return cfiCode;
+    }
+
+    @Override
+    public BigDecimal getMinPriceIncrement() {
+        return minPriceIncrement;
+    }
+
+    @Override
+    public String getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public BigDecimal getLowLimitPx() {
+        return lowLimitPx;
+    }
+
+    @Override
+    public BigDecimal getHighLimitPx() {
+        return highLimitPx;
+    }
+
+    @Override
+    public MarketSegmentID getMarketSegmentID() {
+        return marketSegmentID;
+    }
+
+    @Override
+    public MarketID getMarketID() {
+        return marketID;
+    }
+
+    @Override
+    public Integer getSecurityTradingStatus() {
+        return securityTradingStatus;
+    }
+
+    @Override
+    public List<MDFeedType> getMdFeedTypes() {
+        return mdFeedTypes;
+    }
+
+    @Override
+    public String getSecurityAltID() {
+        return securityAltID;
+    }
+
+    @Override
+    public String getSecurityAltIDSource() {
+        return securityAltIDSource;
+    }
+
+    @Override
+    public SecurityType getSecurityType() {
+        return securityType;
+    }
+
+    @Override
+    public BigDecimal getStrikePrice() {
+        return strikePrice;
+    }
+
+    @Override
+    public BigDecimal getContractMultiplier() {
+        return contractMultiplier;
+    }
+
+    @Override
+    public Integer getTradingSessionID() {
+        return tradingSessionID;
+    }
+
+    @Override
+    public Integer getExchangeTradingSessionID() {
+        return exchangeTradingSessionID;
+    }
+
+    @Override
+    public BigDecimal getVolatility() {
+        return volatility;
+    }
+
+    @Override
+    public List<Underlying> getUnderlyings() {
+        return underlyings;
+    }
+
+    @Override
+    public BigDecimal getMinPriceIncrementAmount() {
+        return minPriceIncrementAmount;
+    }
+
+    @Override
+    public BigDecimal getInitialMarginOnBuy() {
+        return initialMarginOnBuy;
+    }
+
+    @Override
+    public BigDecimal getInitialMarginOnSell() {
+        return initialMarginOnSell;
+    }
+
+    @Override
+    public BigDecimal getInitialMarginSyntetic() {
+        return initialMarginSyntetic;
+    }
+
+    @Override
+    public String getQuotationList() {
+        return quotationList;
+    }
+
+    @Override
+    public BigDecimal getTheorPrice() {
+        return theorPrice;
+    }
+
+    @Override
+    public BigDecimal getTheorPriceLimit() {
+        return theorPriceLimit;
+    }
+
+    @Override
+    public List<InstrumentLeg> getInstrumentLegs() {
+        return instrumentLegs;
+    }
+
+    @Override
+    public List<InstrumentAttribute> getInstrumentAttributes() {
+        return instrumentAttributes;
+    }
+
+    @Override
+    public BigDecimal getUnderlyingQty() {
+        return underlyingQty;
+    }
+
+    @Override
+    public String getUnderlyingCurrency() {
+        return underlyingCurrency;
+    }
+
+    @Override
+    public List<Event> getEvntGrp() {
+        return evntGrp;
+    }
+
+    @Override
+    public LocalDate getMaturityDate() {
+        return maturityDate;
+    }
+
+    @Override
+    public LocalTime getMaturityTime() {
+        return maturityTime;
+    }
+
 }
