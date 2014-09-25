@@ -3,7 +3,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features;
 import javax.inject.Inject;
 import javax.inject.Named;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
 import org.openfast.Context;
 import org.openfast.Message;
 import org.openfast.MessageHandler;

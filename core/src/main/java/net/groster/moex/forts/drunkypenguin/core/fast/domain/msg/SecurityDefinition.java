@@ -1,10 +1,16 @@
-package net.groster.moex.forts.drunkypenguin.core.fast.domain;
+package net.groster.moex.forts.drunkypenguin.core.fast.domain.msg;
 
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.SecurityType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import net.groster.moex.forts.drunkypenguin.core.Constants;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractSecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentAttribute;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.Underlying;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.openfast.GroupValue;

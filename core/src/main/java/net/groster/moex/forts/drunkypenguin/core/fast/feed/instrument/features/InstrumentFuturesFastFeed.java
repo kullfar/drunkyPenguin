@@ -14,7 +14,7 @@ import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.Connection;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.FeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketDataGroup;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketID;
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
 import org.openfast.session.multicast.MulticastClientEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

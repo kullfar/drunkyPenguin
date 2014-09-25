@@ -1,4 +1,4 @@
-package net.groster.moex.forts.drunkypenguin.core.fast.domain;
+package net.groster.moex.forts.drunkypenguin.core.fast.domain.enums;
 
 public enum SecurityType {
 

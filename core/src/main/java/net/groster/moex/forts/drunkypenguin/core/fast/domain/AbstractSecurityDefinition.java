@@ -1,5 +1,7 @@
 package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketSegmentID;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketID;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
