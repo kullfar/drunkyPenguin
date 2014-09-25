@@ -6,7 +6,7 @@ import org.openfast.Message;
 import org.openfast.MessageHandler;
 import org.openfast.codec.Coder;
 
-public class InstrumentIncrementalMessageHandler implements MessageHandler {
+public class InstrumentFuturesIncrementalMessageHandler implements MessageHandler {
 
     @Override
     public void handleMessage(final Message message, final Context context, final Coder coder) {

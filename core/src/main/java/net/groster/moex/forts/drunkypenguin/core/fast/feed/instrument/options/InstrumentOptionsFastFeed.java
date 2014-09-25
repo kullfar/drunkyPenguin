@@ -1,4 +1,4 @@
-package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features;
+package net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.options;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,29 +12,29 @@ import org.openfast.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//<MarketDataGroup feedType="RTS-INSTR" marketID="F" label="All Futures defintion">
+//<MarketDataGroup feedType="RTS-INSTR" marketID="O" label="All Options defintion">
 @Named
 @Singleton
-public class InstrumentFuturesFastFeed extends AbstractInstrumentFastFeed {
+public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentFuturesReplayMessageHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentOptionsFastFeed.class);
 
     private final Map<String, SecurityDefinition> symbol2SecurityDefinitionMap = new HashMap<>();
     private boolean needInitialSnapshot = true;
 
     @Override
     public MarketID getMarketID() {
-        return MarketID.FUTURES;
+        return MarketID.OPTIONS;
     }
 
     @Override
     public MessageHandler createInstrumentIncrementalMessageHandler() {
-        return new InstrumentFuturesIncrementalMessageHandler();
+        return new InstrumentOptionsIncrementalMessageHandler();
     }
 
     @Override
     public MessageHandler createInstrumentReplayMessageHandler() {
-        return getBeanFactory().getBean(InstrumentFuturesReplayMessageHandler.class);
+        return getBeanFactory().getBean(InstrumentOptionsReplayMessageHandler.class);
     }
 
     //TODO:move to abstract parent?

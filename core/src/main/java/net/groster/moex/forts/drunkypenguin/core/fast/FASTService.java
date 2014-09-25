@@ -15,6 +15,7 @@ import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.FeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketDataGroup;
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features.InstrumentFuturesFastFeed;
+import net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.options.InstrumentOptionsFastFeed;
 import org.openfast.template.MessageTemplate;
 import org.openfast.template.loader.XMLMessageTemplateLoader;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ public class FASTService {
     private Configuration configuration;
     @Inject
     private InstrumentFuturesFastFeed instrumentFuturesFastFeed;
+    @Inject
+    private InstrumentOptionsFastFeed instrumentOptionsFastFeed;
 
     @PostConstruct
     public void postConstruct() {
@@ -63,6 +66,7 @@ public class FASTService {
 
     public void start() {
         instrumentFuturesFastFeed.start();
+        instrumentOptionsFastFeed.start();
     }
 
     //unused yet Feeds

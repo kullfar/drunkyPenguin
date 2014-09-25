@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketSegmentID;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.TradingSessionID;
 import org.joda.time.DateTime;
 
 public interface CommonSecurityDefinition {
@@ -30,7 +31,11 @@ public interface CommonSecurityDefinition {
 
     String getCfiCode();
 
+    BigDecimal getContractMultiplier();
+
     BigDecimal getMinPriceIncrement();
+
+    BigDecimal getMinPriceIncrementAmount();
 
     String getCurrency();
 
@@ -42,8 +47,17 @@ public interface CommonSecurityDefinition {
 
     MarketID getMarketID();
 
+    TradingSessionID getTradingSessionID();
+
+    Integer getExchangeTradingSessionID();
+
+    BigDecimal getInitialMarginOnBuy();
+
+    BigDecimal getInitialMarginOnSell();
+
     Integer getSecurityTradingStatus();
 
     List<MDFeedType> getMdFeedTypes();
 
+    List<Event> getEvntGrp();
 }

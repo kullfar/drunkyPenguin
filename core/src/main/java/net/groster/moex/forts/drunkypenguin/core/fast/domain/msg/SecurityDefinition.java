@@ -8,13 +8,14 @@ import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.FuturesSecurityDefinition;
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentAttribute;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.MDFeedType;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.OptionsSecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Underlying;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketSegmentID;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.SecurityType;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.TradingSessionID;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.openfast.GroupValue;
@@ -22,7 +23,7 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 import org.openfast.SequenceValue;
 
-public class SecurityDefinition extends AbstractFASTMessage implements FuturesSecurityDefinition {
+public class SecurityDefinition extends AbstractFASTMessage implements FuturesSecurityDefinition, OptionsSecurityDefinition {
 
     private final long securityID;
     private final int securityIDSource;
@@ -38,12 +39,10 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     private final MarketID marketID;
     private final Integer securityTradingStatus;
     private final List<MDFeedType> mdFeedTypes;
-    private final String securityAltID;
-    private final String securityAltIDSource;
     private final SecurityType securityType;
     private final BigDecimal strikePrice;
     private final BigDecimal contractMultiplier;
-    private final Integer tradingSessionID;
+    private final TradingSessionID tradingSessionID;
     private final Integer exchangeTradingSessionID;
     private final BigDecimal volatility;
     private List<Underlying> underlyings;
@@ -51,13 +50,9 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     private final BigDecimal initialMarginOnBuy;
     private final BigDecimal initialMarginOnSell;
     private final BigDecimal initialMarginSyntetic;
-    private final String quotationList;
     private final BigDecimal theorPrice;
     private final BigDecimal theorPriceLimit;
     private List<InstrumentLeg> instrumentLegs;
-    private List<InstrumentAttribute> instrumentAttributes;
-    private final BigDecimal underlyingQty;
-    private final String underlyingCurrency;
     private List<Event> evntGrp;
     private final LocalDate maturityDate;
     private final LocalTime maturityTime;
@@ -105,8 +100,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
             mdFeedTypesList.add(mdFeedType);
         }
         mdFeedTypes = mdFeedTypesList;
-        securityAltID = fastMessage.getString("SecurityAltID");
-        securityAltIDSource = fastMessage.getString("SecurityAltIDSource");
 
         final String securityTypeString = fastMessage.getString("SecurityType");
         securityType = securityTypeString == null ? null : SecurityType.valueOf(securityTypeString);
@@ -118,7 +111,7 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         contractMultiplier = contractMultiplierScalarValue == null ? null : contractMultiplierScalarValue.toBigDecimal();
 
         final ScalarValue tradingSessionIDScalarValue = fastMessage.getScalar("TradingSessionID");
-        tradingSessionID = tradingSessionIDScalarValue == null ? null : tradingSessionIDScalarValue.toInt();
+        tradingSessionID = tradingSessionIDScalarValue == null ? null : TradingSessionID.valueOf(tradingSessionIDScalarValue.toInt());
 
         final ScalarValue exchangeTradingSessionIDScalarValue = fastMessage.getScalar("ExchangeTradingSessionID");
         exchangeTradingSessionID = exchangeTradingSessionIDScalarValue == null ? null
@@ -161,8 +154,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         initialMarginSyntetic = initialMarginSynteticScalarValue == null ? null : initialMarginSynteticScalarValue.
                 toBigDecimal();
 
-        quotationList = fastMessage.getString("QuotationList");
-
         final ScalarValue theorPriceScalarValue = fastMessage.getScalar("TheorPrice");
         theorPrice = theorPriceScalarValue == null ? null : theorPriceScalarValue.toBigDecimal();
 
@@ -182,27 +173,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
             }
             instrumentLegs = instrumentLegsList;
         }
-
-        final SequenceValue instrumentAttributesSequenceValue = fastMessage.getSequence(
-                "InstrumentAttributes");
-        if (instrumentAttributesSequenceValue != null) {
-            final GroupValue[] instrumentAttributesArray = instrumentAttributesSequenceValue.getValues();
-            final List<InstrumentAttribute> instrumentAttributesList = new ArrayList<>(
-                    instrumentAttributesArray.length);
-            for (final GroupValue instrumentAttributeValue : instrumentAttributesArray) {
-                final InstrumentAttribute instrumentAttribute = new InstrumentAttribute();
-                instrumentAttribute.setInstrAttribType(instrumentAttributeValue.getInt("InstrAttribType"));
-                instrumentAttribute.setInstrAttribValue(instrumentAttributeValue.getString(
-                        "InstrAttribValue"));
-                instrumentAttributesList.add(instrumentAttribute);
-            }
-            instrumentAttributes = instrumentAttributesList;
-        }
-
-        final ScalarValue underlyingQtyValue = fastMessage.getScalar("UnderlyingQty");
-        underlyingQty = underlyingQtyValue == null ? null : underlyingQtyValue.toBigDecimal();
-
-        underlyingCurrency = fastMessage.getString("UnderlyingCurrency");
 
         final SequenceValue evntGrpSequenceValue = fastMessage.getSequence("EvntGrp");
         if (evntGrpSequenceValue != null) {
@@ -300,16 +270,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     }
 
     @Override
-    public String getSecurityAltID() {
-        return securityAltID;
-    }
-
-    @Override
-    public String getSecurityAltIDSource() {
-        return securityAltIDSource;
-    }
-
-    @Override
     public SecurityType getSecurityType() {
         return securityType;
     }
@@ -325,7 +285,7 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     }
 
     @Override
-    public Integer getTradingSessionID() {
+    public TradingSessionID getTradingSessionID() {
         return tradingSessionID;
     }
 
@@ -365,11 +325,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     }
 
     @Override
-    public String getQuotationList() {
-        return quotationList;
-    }
-
-    @Override
     public BigDecimal getTheorPrice() {
         return theorPrice;
     }
@@ -382,21 +337,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     @Override
     public List<InstrumentLeg> getInstrumentLegs() {
         return instrumentLegs;
-    }
-
-    @Override
-    public List<InstrumentAttribute> getInstrumentAttributes() {
-        return instrumentAttributes;
-    }
-
-    @Override
-    public BigDecimal getUnderlyingQty() {
-        return underlyingQty;
-    }
-
-    @Override
-    public String getUnderlyingCurrency() {
-        return underlyingCurrency;
     }
 
     @Override
