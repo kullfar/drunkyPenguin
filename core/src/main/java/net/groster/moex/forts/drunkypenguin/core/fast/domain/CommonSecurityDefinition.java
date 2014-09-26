@@ -19,9 +19,7 @@ public interface CommonSecurityDefinition {
 
     String getApplVerID();
 
-    long getSecurityID();
-
-    int getSecurityIDSource();
+    SecurityPK getSecurityPK();
 
     int getTotNumReports();
 

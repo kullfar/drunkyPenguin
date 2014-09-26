@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.groster.moex.forts.drunkypenguin.core.Constants;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
-import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.FuturesSecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
@@ -23,10 +22,8 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 import org.openfast.SequenceValue;
 
-public class SecurityDefinition extends AbstractFASTMessage implements FuturesSecurityDefinition, OptionsSecurityDefinition {
+public class SecurityDefinition extends SecurityDefinitionUpdateReport implements FuturesSecurityDefinition, OptionsSecurityDefinition {
 
-    private final long securityID;
-    private final int securityIDSource;
     private final int totNumReports;
     private final String symbol;
     private final String securityDesc;
@@ -44,14 +41,11 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     private final BigDecimal contractMultiplier;
     private final TradingSessionID tradingSessionID;
     private final Integer exchangeTradingSessionID;
-    private final BigDecimal volatility;
     private List<Underlying> underlyings;
     private final BigDecimal minPriceIncrementAmount;
     private final BigDecimal initialMarginOnBuy;
     private final BigDecimal initialMarginOnSell;
     private final BigDecimal initialMarginSyntetic;
-    private final BigDecimal theorPrice;
-    private final BigDecimal theorPriceLimit;
     private List<InstrumentLeg> instrumentLegs;
     private List<Event> evntGrp;
     private final LocalDate maturityDate;
@@ -59,8 +53,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
 
     public SecurityDefinition(final Message fastMessage) {
         super(fastMessage);
-        securityID = fastMessage.getLong("SecurityID");
-        securityIDSource = fastMessage.getInt("SecurityIDSource");
         totNumReports = fastMessage.getInt("TotNumReports");
         symbol = fastMessage.getString("Symbol");
         securityDesc = fastMessage.getString("SecurityDesc");
@@ -117,9 +109,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         exchangeTradingSessionID = exchangeTradingSessionIDScalarValue == null ? null
                 : exchangeTradingSessionIDScalarValue.toInt();
 
-        final ScalarValue volatilityScalarValue = fastMessage.getScalar("Volatility");
-        volatility = volatilityScalarValue == null ? null : volatilityScalarValue.toBigDecimal();
-
         final SequenceValue underlyingsSequenceValue = fastMessage.getSequence("Underlyings");
         if (underlyingsSequenceValue != null) {
             final GroupValue[] underlyingsArray = underlyingsSequenceValue.getValues();
@@ -153,12 +142,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         final ScalarValue initialMarginSynteticScalarValue = fastMessage.getScalar("InitialMarginSyntetic");
         initialMarginSyntetic = initialMarginSynteticScalarValue == null ? null : initialMarginSynteticScalarValue.
                 toBigDecimal();
-
-        final ScalarValue theorPriceScalarValue = fastMessage.getScalar("TheorPrice");
-        theorPrice = theorPriceScalarValue == null ? null : theorPriceScalarValue.toBigDecimal();
-
-        final ScalarValue theorPriceLimitScalarValue = fastMessage.getScalar("TheorPriceLimit");
-        theorPriceLimit = theorPriceLimitScalarValue == null ? null : theorPriceLimitScalarValue.toBigDecimal();
 
         final SequenceValue instrumentLegsSequenceValue = fastMessage.getSequence("InstrumentLegs");
         if (instrumentLegsSequenceValue != null) {
@@ -197,16 +180,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         final ScalarValue maturityTimeScalarValue = fastMessage.getScalar("MaturityTime");
         maturityTime = maturityTimeScalarValue == null ? null : MessageType.FAST_TIME_UTC_FORMATTER.parseDateTime(
                 Integer.toString(maturityTimeScalarValue.toInt())).withZone(Constants.MOEX_TIME_ZONE).toLocalTime();
-    }
-
-    @Override
-    public long getSecurityID() {
-        return securityID;
-    }
-
-    @Override
-    public int getSecurityIDSource() {
-        return securityIDSource;
     }
 
     @Override
@@ -295,11 +268,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     }
 
     @Override
-    public BigDecimal getVolatility() {
-        return volatility;
-    }
-
-    @Override
     public List<Underlying> getUnderlyings() {
         return underlyings;
     }
@@ -322,16 +290,6 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
     @Override
     public BigDecimal getInitialMarginSyntetic() {
         return initialMarginSyntetic;
-    }
-
-    @Override
-    public BigDecimal getTheorPrice() {
-        return theorPrice;
-    }
-
-    @Override
-    public BigDecimal getTheorPriceLimit() {
-        return theorPriceLimit;
     }
 
     @Override

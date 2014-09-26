@@ -3,8 +3,10 @@ package net.groster.moex.forts.drunkypenguin.core.fast;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.Heartbeat;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinitionUpdateReport;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SequenceReset;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -27,7 +29,12 @@ public enum MessageType {
                     return new SecurityDefinition(fastMessage);
                 }
             },
-    SECURITY_DEFINITION_UPDATE_REPORT("SecurityDefinitionUpdateReport"),
+    SECURITY_DEFINITION_UPDATE_REPORT("SecurityDefinitionUpdateReport") {
+                @Override
+                public SecurityDefinitionUpdateReport parseFASTMessage(final Message fastMessage) {
+                    return new SecurityDefinitionUpdateReport(fastMessage);
+                }
+            },
     SECURITY_STATUS("SecurityStatus"),
     HEARTBEAT("Heartbeat") {
                 @Override
@@ -73,7 +80,7 @@ public enum MessageType {
         ID_2_MESSAGE_TYPE.put(id, this);
     }
 
-    public Object parseFASTMessage(final Message fastMessage) {
+    public AbstractFASTMessage parseFASTMessage(final Message fastMessage) {
         return null;
     }
 
