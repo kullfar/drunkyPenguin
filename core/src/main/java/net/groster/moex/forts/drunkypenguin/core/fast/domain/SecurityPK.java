@@ -27,10 +27,7 @@ public class SecurityPK {
         if (securityID != other.getSecurityID()) {
             return false;
         }
-        if (securityIDSource != other.getSecurityIDSource()) {
-            return false;
-        }
-        return true;
+        return securityIDSource == other.getSecurityIDSource();
     }
 
     public long getSecurityID() {

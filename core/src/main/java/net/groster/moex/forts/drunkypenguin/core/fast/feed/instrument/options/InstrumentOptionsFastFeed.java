@@ -66,17 +66,17 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
         }
     }
 
-    void onSecurityDefinitionUpdateReport(SecurityDefinitionUpdateReport securityDefinitionUpdateReport) {
+    void onSecurityDefinitionUpdateReport(final SecurityDefinitionUpdateReport securityDefinitionUpdateReport) {
         final SecurityPK securityPK = securityDefinitionUpdateReport.getSecurityPK();
         synchronized (symbol2SecurityDefinitionMap) {
-            SecurityDefinition securityDefinition = symbol2SecurityDefinitionMap.get(securityPK);
-            if (securityDefinition != null) {
-                updateSD(securityDefinition, securityDefinitionUpdateReport);
-            } else {
+            final SecurityDefinition securityDefinition = symbol2SecurityDefinitionMap.get(securityPK);
+            if (securityDefinition == null) {
                 final SecurityDefinitionUpdateReport prevSDUR = symbol2SecurityDefinitionUpdateReportMap.get(securityPK);
                 if (prevSDUR == null || prevSDUR.getSendingTime().isBefore(securityDefinitionUpdateReport.getSendingTime())) {
                     symbol2SecurityDefinitionUpdateReportMap.put(securityPK, securityDefinitionUpdateReport);
                 }
+            } else {
+                updateSD(securityDefinition, securityDefinitionUpdateReport);
             }
         }
     }
