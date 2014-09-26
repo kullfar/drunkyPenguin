@@ -3,7 +3,7 @@ package net.groster.moex.forts.drunkypenguin.core.fast.domain;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface OptionsSecurityDefinition {
+public interface OptionsSecurityDefinition extends CommonSecurityDefinition {
 
     BigDecimal getStrikePrice();
 
