@@ -7,6 +7,7 @@ import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.Heartbeat;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinitionUpdateReport;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityStatus;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SequenceReset;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -35,7 +36,12 @@ public enum MessageType {
                     return new SecurityDefinitionUpdateReport(fastMessage);
                 }
             },
-    SECURITY_STATUS("SecurityStatus"),
+    SECURITY_STATUS("SecurityStatus") {
+                @Override
+                public SecurityStatus parseFASTMessage(final Message fastMessage) {
+                    return new SecurityStatus(fastMessage);
+                }
+            },
     HEARTBEAT("Heartbeat") {
                 @Override
                 public Heartbeat parseFASTMessage(final Message fastMessage) {

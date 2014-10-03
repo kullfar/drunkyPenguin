@@ -7,15 +7,17 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 
 public class SecurityDefinitionUpdateReport extends AbstractFASTMessage {
+//TODO:use seqNum
 
     private final SecurityPK securityPK;
-    private BigDecimal volatility;
-    private BigDecimal theorPrice;
-    private BigDecimal theorPriceLimit;
+    private final BigDecimal volatility;
+    private final BigDecimal theorPrice;
+    private final BigDecimal theorPriceLimit;
 
     public SecurityDefinitionUpdateReport(final Message fastMessage) {
         super(fastMessage);
         securityPK = new SecurityPK(fastMessage.getLong("SecurityID"), fastMessage.getInt("SecurityIDSource"));
+
         final ScalarValue volatilityScalarValue = fastMessage.getScalar("Volatility");
         volatility = volatilityScalarValue == null ? null : volatilityScalarValue.toBigDecimal();
 
@@ -40,17 +42,5 @@ public class SecurityDefinitionUpdateReport extends AbstractFASTMessage {
 
     public BigDecimal getTheorPriceLimit() {
         return theorPriceLimit;
-    }
-
-    public void setVolatility(final BigDecimal volatility) {
-        this.volatility = volatility;
-    }
-
-    public void setTheorPrice(final BigDecimal theorPrice) {
-        this.theorPrice = theorPrice;
-    }
-
-    public void setTheorPriceLimit(final BigDecimal theorPriceLimit) {
-        this.theorPriceLimit = theorPriceLimit;
     }
 }

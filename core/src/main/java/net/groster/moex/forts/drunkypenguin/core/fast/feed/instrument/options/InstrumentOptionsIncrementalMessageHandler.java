@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinitionUpdateReport;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityStatus;
 import org.openfast.Context;
 import org.openfast.Message;
 import org.openfast.MessageHandler;
@@ -29,6 +30,9 @@ public class InstrumentOptionsIncrementalMessageHandler implements MessageHandle
                 instrumentOptionsFastFeed.onSecurityDefinitionUpdateReport((SecurityDefinitionUpdateReport) messageType.parseFASTMessage(message));
                 break;
             case HEARTBEAT:
+                break;
+            case SECURITY_STATUS:
+                instrumentOptionsFastFeed.onSecurityStatus((SecurityStatus) messageType.parseFASTMessage(message));
                 break;
             default:
                 MessageType.logUnknownFASTMessage(message);

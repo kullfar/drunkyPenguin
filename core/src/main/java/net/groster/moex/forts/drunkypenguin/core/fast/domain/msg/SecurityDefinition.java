@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import net.groster.moex.forts.drunkypenguin.core.Constants;
 import net.groster.moex.forts.drunkypenguin.core.fast.MessageType;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Event;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.FuturesSecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.InstrumentLeg;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.MDFeedType;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.OptionsSecurityDefinition;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityPK;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.Underlying;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.enums.MarketSegmentID;
@@ -22,19 +24,19 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 import org.openfast.SequenceValue;
 
-public class SecurityDefinition extends SecurityDefinitionUpdateReport implements FuturesSecurityDefinition, OptionsSecurityDefinition {
+public class SecurityDefinition extends AbstractFASTMessage implements FuturesSecurityDefinition, OptionsSecurityDefinition {
 
     private final int totNumReports;
-    private final String symbol;
+    private String symbol;
     private final String securityDesc;
     private final String cfiCode;
     private final BigDecimal minPriceIncrement;
     private final String currency;
-    private final BigDecimal lowLimitPx;
-    private final BigDecimal highLimitPx;
+    private BigDecimal lowLimitPx;
+    private BigDecimal highLimitPx;
     private final MarketSegmentID marketSegmentID;
     private final MarketID marketID;
-    private final Integer securityTradingStatus;
+    private Integer securityTradingStatus;
     private final List<MDFeedType> mdFeedTypes;
     private final SecurityType securityType;
     private final BigDecimal strikePrice;
@@ -43,16 +45,31 @@ public class SecurityDefinition extends SecurityDefinitionUpdateReport implement
     private final Integer exchangeTradingSessionID;
     private List<Underlying> underlyings;
     private final BigDecimal minPriceIncrementAmount;
-    private final BigDecimal initialMarginOnBuy;
-    private final BigDecimal initialMarginOnSell;
-    private final BigDecimal initialMarginSyntetic;
+    private BigDecimal initialMarginOnBuy;
+    private BigDecimal initialMarginOnSell;
+    private BigDecimal initialMarginSyntetic;
     private List<InstrumentLeg> instrumentLegs;
     private List<Event> evntGrp;
     private final LocalDate maturityDate;
     private final LocalTime maturityTime;
+    private final SecurityPK securityPK;
+    private BigDecimal volatility;
+    private BigDecimal theorPrice;
+    private BigDecimal theorPriceLimit;
 
     public SecurityDefinition(final Message fastMessage) {
         super(fastMessage);
+        securityPK = new SecurityPK(fastMessage.getLong("SecurityID"), fastMessage.getInt("SecurityIDSource"));
+
+        final ScalarValue volatilityScalarValue = fastMessage.getScalar("Volatility");
+        volatility = volatilityScalarValue == null ? null : volatilityScalarValue.toBigDecimal();
+
+        final ScalarValue theorPriceScalarValue = fastMessage.getScalar("TheorPrice");
+        theorPrice = theorPriceScalarValue == null ? null : theorPriceScalarValue.toBigDecimal();
+
+        final ScalarValue theorPriceLimitScalarValue = fastMessage.getScalar("TheorPriceLimit");
+        theorPriceLimit = theorPriceLimitScalarValue == null ? null : theorPriceLimitScalarValue.toBigDecimal();
+
         totNumReports = fastMessage.getInt("TotNumReports");
         symbol = fastMessage.getString("Symbol");
         securityDesc = fastMessage.getString("SecurityDesc");
@@ -312,4 +329,63 @@ public class SecurityDefinition extends SecurityDefinitionUpdateReport implement
         return maturityTime;
     }
 
+    @Override
+    public SecurityPK getSecurityPK() {
+        return securityPK;
+    }
+
+    @Override
+    public BigDecimal getVolatility() {
+        return volatility;
+    }
+
+    @Override
+    public BigDecimal getTheorPrice() {
+        return theorPrice;
+    }
+
+    @Override
+    public BigDecimal getTheorPriceLimit() {
+        return theorPriceLimit;
+    }
+
+    public void setVolatility(final BigDecimal volatility) {
+        this.volatility = volatility;
+    }
+
+    public void setTheorPrice(final BigDecimal theorPrice) {
+        this.theorPrice = theorPrice;
+    }
+
+    public void setTheorPriceLimit(final BigDecimal theorPriceLimit) {
+        this.theorPriceLimit = theorPriceLimit;
+    }
+
+    public void setSymbol(final String symbol) {
+        this.symbol = symbol;
+    }
+
+    public void setLowLimitPx(final BigDecimal lowLimitPx) {
+        this.lowLimitPx = lowLimitPx;
+    }
+
+    public void setHighLimitPx(final BigDecimal highLimitPx) {
+        this.highLimitPx = highLimitPx;
+    }
+
+    public void setSecurityTradingStatus(final Integer securityTradingStatus) {
+        this.securityTradingStatus = securityTradingStatus;
+    }
+
+    public void setInitialMarginOnBuy(final BigDecimal initialMarginOnBuy) {
+        this.initialMarginOnBuy = initialMarginOnBuy;
+    }
+
+    public void setInitialMarginOnSell(final BigDecimal initialMarginOnSell) {
+        this.initialMarginOnSell = initialMarginOnSell;
+    }
+
+    public void setInitialMarginSyntetic(final BigDecimal initialMarginSyntetic) {
+        this.initialMarginSyntetic = initialMarginSyntetic;
+    }
 }

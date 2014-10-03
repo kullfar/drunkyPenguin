@@ -10,6 +10,7 @@ import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.SecurityPK;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinitionUpdateReport;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityStatus;
 import net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.AbstractInstrumentFastFeed;
 import org.openfast.MessageHandler;
 import org.slf4j.Logger;
@@ -22,8 +23,9 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentOptionsFastFeed.class);
 
-    private final Map<SecurityPK, SecurityDefinition> symbol2SecurityDefinitionMap = new HashMap<>();
-    private final Map<SecurityPK, SecurityDefinitionUpdateReport> symbol2SecurityDefinitionUpdateReportMap = new HashMap<>();
+    private final Map<SecurityPK, SecurityDefinition> securityPK2SecurityDefinitionMap = new HashMap<>();
+    private final Map<SecurityPK, SecurityDefinitionUpdateReport> securityPK2SecurityDefinitionUpdateReportMap = new HashMap<>();
+    private final Map<SecurityPK, SecurityStatus> securityPK2SecurityStatusMap = new HashMap<>();
     private boolean needInitialSnapshot = true;
 
     @Override
@@ -44,36 +46,56 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
     //TODO:move to abstract parent?
     void onNewReplaySecurityDefinition(final SecurityDefinition sd) {
         final SecurityPK securityPK = sd.getSecurityPK();
-        synchronized (symbol2SecurityDefinitionMap) {
+        synchronized (securityPK2SecurityDefinitionMap) {
             if (needInitialSnapshot) {
-                symbol2SecurityDefinitionMap.put(securityPK, sd);
-                final SecurityDefinitionUpdateReport sdur = symbol2SecurityDefinitionUpdateReportMap.remove(securityPK);
+                securityPK2SecurityDefinitionMap.put(securityPK, sd);
+                final SecurityDefinitionUpdateReport sdur = securityPK2SecurityDefinitionUpdateReportMap.remove(securityPK);
                 if (sdur != null) {
                     updateSD(sd, sdur);
                 }
 
-                if (sd.getTotNumReports() == symbol2SecurityDefinitionMap.size()) {
+                final SecurityStatus ss = securityPK2SecurityStatusMap.remove(securityPK);
+                if (ss != null) {
+                    updateSS(sd, ss);
+                }
+
+                if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
                     LOGGER.info("GOT IT! OPTIONS DEFINITIONS SET");
                     //TODO: show it via REST
                     needInitialSnapshot = false;
                     for (final ConnectionThread connectionThread : getReplayConnectionThreads()) {
                         connectionThread.stopConnection();
                     }
-                } else if (sd.getTotNumReports() < symbol2SecurityDefinitionMap.size()) {
-                    symbol2SecurityDefinitionMap.clear();
+                } else if (sd.getTotNumReports() < securityPK2SecurityDefinitionMap.size()) {
+                    securityPK2SecurityDefinitionMap.clear();
                 }
+            }
+        }
+    }
+
+    void onSecurityStatus(final SecurityStatus securityStatus) {
+        final SecurityPK securityPK = securityStatus.getSecurityPK();
+        synchronized (securityPK2SecurityDefinitionMap) {
+            final SecurityDefinition securityDefinition = securityPK2SecurityDefinitionMap.get(securityPK);
+            if (securityDefinition == null) {
+                final SecurityStatus prevSS = securityPK2SecurityStatusMap.get(securityPK);
+                if (prevSS == null || prevSS.getSendingTime().isBefore(securityStatus.getSendingTime())) {
+                    securityPK2SecurityStatusMap.put(securityPK, securityStatus);
+                }
+            } else {
+                updateSS(securityDefinition, securityStatus);
             }
         }
     }
 
     void onSecurityDefinitionUpdateReport(final SecurityDefinitionUpdateReport securityDefinitionUpdateReport) {
         final SecurityPK securityPK = securityDefinitionUpdateReport.getSecurityPK();
-        synchronized (symbol2SecurityDefinitionMap) {
-            final SecurityDefinition securityDefinition = symbol2SecurityDefinitionMap.get(securityPK);
+        synchronized (securityPK2SecurityDefinitionMap) {
+            final SecurityDefinition securityDefinition = securityPK2SecurityDefinitionMap.get(securityPK);
             if (securityDefinition == null) {
-                final SecurityDefinitionUpdateReport prevSDUR = symbol2SecurityDefinitionUpdateReportMap.get(securityPK);
+                final SecurityDefinitionUpdateReport prevSDUR = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
                 if (prevSDUR == null || prevSDUR.getSendingTime().isBefore(securityDefinitionUpdateReport.getSendingTime())) {
-                    symbol2SecurityDefinitionUpdateReportMap.put(securityPK, securityDefinitionUpdateReport);
+                    securityPK2SecurityDefinitionUpdateReportMap.put(securityPK, securityDefinitionUpdateReport);
                 }
             } else {
                 updateSD(securityDefinition, securityDefinitionUpdateReport);
@@ -98,5 +120,45 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
             }
         }
 
+    }
+
+    private void updateSS(final SecurityDefinition securityDefinition, final SecurityStatus securityStatus) {
+        if (securityStatus.getSendingTime().isAfter(securityDefinition.getSendingTime())) {
+
+            final String symbol = securityStatus.getSymbol();
+            if (symbol != null) {
+                securityDefinition.setSymbol(symbol);
+            }
+
+            final Integer securityTradingStatus = securityStatus.getSecurityTradingStatus();
+            if (securityTradingStatus != null) {
+                securityDefinition.setSecurityTradingStatus(securityTradingStatus);
+            }
+
+            final BigDecimal lowLimitPx = securityStatus.getLowLimitPx();
+            if (lowLimitPx != null) {
+                securityDefinition.setLowLimitPx(lowLimitPx);
+            }
+
+            final BigDecimal highLimitPx = securityStatus.getHighLimitPx();
+            if (highLimitPx != null) {
+                securityDefinition.setHighLimitPx(highLimitPx);
+            }
+
+            final BigDecimal initialMarginOnBuy = securityStatus.getInitialMarginOnBuy();
+            if (initialMarginOnBuy != null) {
+                securityDefinition.setInitialMarginOnBuy(initialMarginOnBuy);
+            }
+
+            final BigDecimal initialMarginOnSell = securityStatus.getInitialMarginOnSell();
+            if (initialMarginOnSell != null) {
+                securityDefinition.setInitialMarginOnSell(initialMarginOnSell);
+            }
+
+            final BigDecimal initialMarginSyntetic = securityStatus.getInitialMarginSyntetic();
+            if (initialMarginSyntetic != null) {
+                securityDefinition.setInitialMarginSyntetic(initialMarginSyntetic);
+            }
+        }
     }
 }
