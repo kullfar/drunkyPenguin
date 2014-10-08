@@ -47,31 +47,29 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
         synchronized (securityPK2SecurityDefinitionMap) {
             if (needInitialSnapshot) {
                 final SecurityDefinition currentSD = securityPK2SecurityDefinitionMap.get(securityPK);
-                if (!sd.getSendingTime().isAfter(currentSD.getSendingTime())) {
-                    return;
-                }
+                if (currentSD == null || sd.getSendingTime().isAfter(currentSD.getSendingTime())) {
+                    securityPK2SecurityDefinitionMap.put(securityPK, sd);
 
-                securityPK2SecurityDefinitionMap.put(securityPK, sd);
-
-                final SecurityDefinitionUpdateReport sdur = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
-                if (sdur != null && !updateSD(sd, sdur)) {
-                    securityPK2SecurityDefinitionUpdateReportMap.remove(securityPK);
-                }
-
-                final SecurityStatus ss = getSecurityPK2SecurityStatusMap().get(securityPK);
-                if (ss != null && !updateSS(sd, ss)) {
-                    getSecurityPK2SecurityStatusMap().remove(securityPK);
-                }
-
-                if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
-                    LOGGER.info("GOT IT! OPTIONS DEFINITIONS SET");
-                    //TODO: show it via REST
-                    needInitialSnapshot = false;
-                    for (final ConnectionThread connectionThread : getReplayConnectionThreads()) {
-                        connectionThread.stopConnection();
+                    final SecurityDefinitionUpdateReport sdur = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
+                    if (sdur != null && !updateSD(sd, sdur)) {
+                        securityPK2SecurityDefinitionUpdateReportMap.remove(securityPK);
                     }
-                } else if (sd.getTotNumReports() < securityPK2SecurityDefinitionMap.size()) {
-                    securityPK2SecurityDefinitionMap.clear();
+
+                    final SecurityStatus ss = getSecurityPK2SecurityStatusMap().get(securityPK);
+                    if (ss != null && !updateSS(sd, ss)) {
+                        getSecurityPK2SecurityStatusMap().remove(securityPK);
+                    }
+
+                    if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
+                        LOGGER.info("GOT IT! OPTIONS DEFINITIONS SET");
+                        //TODO: show it via REST
+                        needInitialSnapshot = false;
+                        for (final ConnectionThread connectionThread : getReplayConnectionThreads()) {
+                            connectionThread.stopConnection();
+                        }
+                    } else if (sd.getTotNumReports() < securityPK2SecurityDefinitionMap.size()) {
+                        securityPK2SecurityDefinitionMap.clear();
+                    }
                 }
             }
         }

@@ -42,26 +42,24 @@ public class InstrumentFuturesFastFeed extends AbstractInstrumentFastFeed {
         synchronized (securityPK2SecurityDefinitionMap) {
             if (needInitialSnapshot) {
                 final SecurityDefinition currentSD = securityPK2SecurityDefinitionMap.get(securityPK);
-                if (!sd.getSendingTime().isAfter(currentSD.getSendingTime())) {
-                    return;
-                }
+                if (currentSD == null || sd.getSendingTime().isAfter(currentSD.getSendingTime())) {
+                    securityPK2SecurityDefinitionMap.put(securityPK, sd);
 
-                securityPK2SecurityDefinitionMap.put(securityPK, sd);
-
-                final SecurityStatus ss = getSecurityPK2SecurityStatusMap().get(securityPK);
-                if (ss != null && !updateSS(sd, ss)) {
-                    getSecurityPK2SecurityStatusMap().remove(securityPK);
-                }
-
-                if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
-                    LOGGER.info("GOT IT! FUTURES DEFINITIONS SET");
-                    //TODO: show it via REST
-                    needInitialSnapshot = false;
-                    for (final ConnectionThread connectionThread : getReplayConnectionThreads()) {
-                        connectionThread.stopConnection();
+                    final SecurityStatus ss = getSecurityPK2SecurityStatusMap().get(securityPK);
+                    if (ss != null && !updateSS(sd, ss)) {
+                        getSecurityPK2SecurityStatusMap().remove(securityPK);
                     }
-                } else if (sd.getTotNumReports() < securityPK2SecurityDefinitionMap.size()) {
-                    securityPK2SecurityDefinitionMap.clear();
+
+                    if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
+                        LOGGER.info("GOT IT! FUTURES DEFINITIONS SET");
+                        //TODO: show it via REST
+                        needInitialSnapshot = false;
+                        for (final ConnectionThread connectionThread : getReplayConnectionThreads()) {
+                            connectionThread.stopConnection();
+                        }
+                    } else if (sd.getTotNumReports() < securityPK2SecurityDefinitionMap.size()) {
+                        securityPK2SecurityDefinitionMap.clear();
+                    }
                 }
             }
         }
