@@ -23,9 +23,7 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentOptionsFastFeed.class);
 
-    private final Map<SecurityPK, SecurityDefinition> securityPK2SecurityDefinitionMap = new HashMap<>();
     private final Map<SecurityPK, SecurityDefinitionUpdateReport> securityPK2SecurityDefinitionUpdateReportMap = new HashMap<>();
-    private final Map<SecurityPK, SecurityStatus> securityPK2SecurityStatusMap = new HashMap<>();
     private boolean needInitialSnapshot = true;
 
     @Override
@@ -43,20 +41,26 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
         return getBeanFactory().getBean(InstrumentOptionsReplayMessageHandler.class);
     }
 
-    //TODO:move to abstract parent?
     void onNewReplaySecurityDefinition(final SecurityDefinition sd) {
         final SecurityPK securityPK = sd.getSecurityPK();
+        final Map<SecurityPK, SecurityDefinition> securityPK2SecurityDefinitionMap = getSecurityPK2SecurityDefinitionMap();
         synchronized (securityPK2SecurityDefinitionMap) {
             if (needInitialSnapshot) {
-                securityPK2SecurityDefinitionMap.put(securityPK, sd);
-                final SecurityDefinitionUpdateReport sdur = securityPK2SecurityDefinitionUpdateReportMap.remove(securityPK);
-                if (sdur != null) {
-                    updateSD(sd, sdur);
+                final SecurityDefinition currentSD = securityPK2SecurityDefinitionMap.get(securityPK);
+                if (!sd.getSendingTime().isAfter(currentSD.getSendingTime())) {
+                    return;
                 }
 
-                final SecurityStatus ss = securityPK2SecurityStatusMap.remove(securityPK);
-                if (ss != null) {
-                    updateSS(sd, ss);
+                securityPK2SecurityDefinitionMap.put(securityPK, sd);
+
+                final SecurityDefinitionUpdateReport sdur = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
+                if (sdur != null && !updateSD(sd, sdur)) {
+                    securityPK2SecurityDefinitionUpdateReportMap.remove(securityPK);
+                }
+
+                final SecurityStatus ss = getSecurityPK2SecurityStatusMap().get(securityPK);
+                if (ss != null && !updateSS(sd, ss)) {
+                    getSecurityPK2SecurityStatusMap().remove(securityPK);
                 }
 
                 if (sd.getTotNumReports() == securityPK2SecurityDefinitionMap.size()) {
@@ -73,37 +77,22 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
         }
     }
 
-    void onSecurityStatus(final SecurityStatus securityStatus) {
-        final SecurityPK securityPK = securityStatus.getSecurityPK();
-        synchronized (securityPK2SecurityDefinitionMap) {
-            final SecurityDefinition securityDefinition = securityPK2SecurityDefinitionMap.get(securityPK);
-            if (securityDefinition == null) {
-                final SecurityStatus prevSS = securityPK2SecurityStatusMap.get(securityPK);
-                if (prevSS == null || prevSS.getSendingTime().isBefore(securityStatus.getSendingTime())) {
-                    securityPK2SecurityStatusMap.put(securityPK, securityStatus);
-                }
-            } else {
-                updateSS(securityDefinition, securityStatus);
-            }
-        }
-    }
-
     void onSecurityDefinitionUpdateReport(final SecurityDefinitionUpdateReport securityDefinitionUpdateReport) {
         final SecurityPK securityPK = securityDefinitionUpdateReport.getSecurityPK();
+        final Map<SecurityPK, SecurityDefinition> securityPK2SecurityDefinitionMap = getSecurityPK2SecurityDefinitionMap();
         synchronized (securityPK2SecurityDefinitionMap) {
-            final SecurityDefinition securityDefinition = securityPK2SecurityDefinitionMap.get(securityPK);
-            if (securityDefinition == null) {
-                final SecurityDefinitionUpdateReport prevSDUR = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
-                if (prevSDUR == null || prevSDUR.getSendingTime().isBefore(securityDefinitionUpdateReport.getSendingTime())) {
+            final SecurityDefinitionUpdateReport prevSDUR = securityPK2SecurityDefinitionUpdateReportMap.get(securityPK);
+            if (prevSDUR == null || prevSDUR.getSendingTime().isBefore(securityDefinitionUpdateReport.getSendingTime())) {
+                final SecurityDefinition securityDefinition = securityPK2SecurityDefinitionMap.get(securityPK);
+
+                if (securityDefinition == null || updateSD(securityDefinition, securityDefinitionUpdateReport)) {
                     securityPK2SecurityDefinitionUpdateReportMap.put(securityPK, securityDefinitionUpdateReport);
                 }
-            } else {
-                updateSD(securityDefinition, securityDefinitionUpdateReport);
             }
         }
     }
 
-    private static void updateSD(final SecurityDefinition sd, final SecurityDefinitionUpdateReport sdur) {
+    private static boolean updateSD(final SecurityDefinition sd, final SecurityDefinitionUpdateReport sdur) {
         if (sdur.getSendingTime().isAfter(sd.getSendingTime())) {
 
             final BigDecimal volatility = sdur.getVolatility();
@@ -118,47 +107,9 @@ public class InstrumentOptionsFastFeed extends AbstractInstrumentFastFeed {
             if (theorPriceLimit != null) {
                 sd.setTheorPriceLimit(theorPriceLimit);
             }
-        }
-
-    }
-
-    private void updateSS(final SecurityDefinition securityDefinition, final SecurityStatus securityStatus) {
-        if (securityStatus.getSendingTime().isAfter(securityDefinition.getSendingTime())) {
-
-            final String symbol = securityStatus.getSymbol();
-            if (symbol != null) {
-                securityDefinition.setSymbol(symbol);
-            }
-
-            final Integer securityTradingStatus = securityStatus.getSecurityTradingStatus();
-            if (securityTradingStatus != null) {
-                securityDefinition.setSecurityTradingStatus(securityTradingStatus);
-            }
-
-            final BigDecimal lowLimitPx = securityStatus.getLowLimitPx();
-            if (lowLimitPx != null) {
-                securityDefinition.setLowLimitPx(lowLimitPx);
-            }
-
-            final BigDecimal highLimitPx = securityStatus.getHighLimitPx();
-            if (highLimitPx != null) {
-                securityDefinition.setHighLimitPx(highLimitPx);
-            }
-
-            final BigDecimal initialMarginOnBuy = securityStatus.getInitialMarginOnBuy();
-            if (initialMarginOnBuy != null) {
-                securityDefinition.setInitialMarginOnBuy(initialMarginOnBuy);
-            }
-
-            final BigDecimal initialMarginOnSell = securityStatus.getInitialMarginOnSell();
-            if (initialMarginOnSell != null) {
-                securityDefinition.setInitialMarginOnSell(initialMarginOnSell);
-            }
-
-            final BigDecimal initialMarginSyntetic = securityStatus.getInitialMarginSyntetic();
-            if (initialMarginSyntetic != null) {
-                securityDefinition.setInitialMarginSyntetic(initialMarginSyntetic);
-            }
+            return true;
+        } else {
+            return false;
         }
     }
 }
