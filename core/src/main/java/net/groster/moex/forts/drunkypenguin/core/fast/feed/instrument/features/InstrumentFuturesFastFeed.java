@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class InstrumentFuturesFastFeed extends AbstractInstrumentFastFeed {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentFuturesReplayMessageHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentFuturesFastFeed.class);
     private boolean needInitialSnapshot = true;
 
     @Override

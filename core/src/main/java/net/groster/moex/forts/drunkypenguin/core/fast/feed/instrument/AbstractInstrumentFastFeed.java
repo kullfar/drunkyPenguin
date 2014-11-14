@@ -33,9 +33,10 @@ public abstract class AbstractInstrumentFastFeed {
     private final Map<SecurityPK, SecurityDefinition> securityPK2SecurityDefinitionMap = new HashMap<>();
 
     public void start() {
-        final MarketDataGroup marketDataGroup = fastService.getMarketDataGroup(FeedType.RTS_INSTR, getMarketID());
+        final MarketID marketID = getMarketID();
+        final MarketDataGroup marketDataGroup = fastService.getMarketDataGroup(FeedType.RTS_INSTR, marketID);
         for (final Connection connection : marketDataGroup.getConnections()) {
-            final String feedConnectionName = FeedType.RTS_INSTR.name() + ':' + getMarketID() + '>' + connection.getType() + ':'
+            final String feedConnectionName = FeedType.RTS_INSTR.name() + ':' + marketID + '>' + connection.getType() + ':'
                     + connection.getFeed();
             final ConnectionThread connectionThread = beanFactory.getBean(ConnectionThread.class);
             switch (connection.getType()) {

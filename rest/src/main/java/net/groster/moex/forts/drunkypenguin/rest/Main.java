@@ -38,7 +38,7 @@ public class Main {
         staticSpringContext = springContext;
     }
 
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String... args) throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 

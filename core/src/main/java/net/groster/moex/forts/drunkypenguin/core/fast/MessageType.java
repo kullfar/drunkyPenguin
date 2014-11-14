@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.AbstractFASTMessage;
+import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.DefaultIncrementalRefreshMessage;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.Heartbeat;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinition;
 import net.groster.moex.forts.drunkypenguin.core.fast.domain.msg.SecurityDefinitionUpdateReport;
@@ -22,7 +23,12 @@ import org.slf4j.LoggerFactory;
 
 public enum MessageType {
 
-    DEFAULT_INCREMENTAL_REFRESH_MESSAGE("DefaultIncrementalRefreshMessage"),
+    DEFAULT_INCREMENTAL_REFRESH_MESSAGE("DefaultIncrementalRefreshMessage") {
+                @Override
+                public DefaultIncrementalRefreshMessage parseFASTMessage(final Message fastMessage) {
+                    return new DefaultIncrementalRefreshMessage(fastMessage);
+                }
+            },
     DEFAULT_SNAPSHOT_MESSAGE("DefaultSnapshotMessage"),
     SECURITY_DEFINITION("SecurityDefinition") {
                 @Override

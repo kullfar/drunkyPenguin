@@ -16,6 +16,8 @@ import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketDataGroup
 import net.groster.moex.forts.drunkypenguin.core.fast.config.xml.MarketID;
 import net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.features.InstrumentFuturesFastFeed;
 import net.groster.moex.forts.drunkypenguin.core.fast.feed.instrument.options.InstrumentOptionsFastFeed;
+import net.groster.moex.forts.drunkypenguin.core.fast.feed.trade.features.TradesFuturesFastFeed;
+import net.groster.moex.forts.drunkypenguin.core.fast.feed.trade.options.TradesOptionsFastFeed;
 import org.openfast.template.MessageTemplate;
 import org.openfast.template.loader.XMLMessageTemplateLoader;
 import org.slf4j.Logger;
@@ -32,6 +34,10 @@ public class FASTService {
     private InstrumentFuturesFastFeed instrumentFuturesFastFeed;
     @Inject
     private InstrumentOptionsFastFeed instrumentOptionsFastFeed;
+    @Inject
+    private TradesFuturesFastFeed tradesFuturesFastFeed;
+    @Inject
+    private TradesOptionsFastFeed tradesOptionsFastFeed;
 
     @PostConstruct
     public void postConstruct() {
@@ -67,22 +73,15 @@ public class FASTService {
     public void start() {
         instrumentFuturesFastFeed.start();
         instrumentOptionsFastFeed.start();
+        tradesFuturesFastFeed.start();
+        tradesOptionsFastFeed.start();
     }
 
-    //unused yet Feeds
-    //<MarketDataGroup feedType="RTS-1" marketID="F" marketDepth="1" label="Top of book for Futures">
-    //<MarketDataGroup feedType="RTS-1" marketID="O" marketDepth="1" label="Top of book for Options">
-    //<MarketDataGroup feedType="RTS-20" marketID="F" marketDepth="20" label="Top 20 Price Levels for Futures">
-    //<MarketDataGroup feedType="RTS-20" marketID="O" marketDepth="20" label="Top 20 Price Levels for Options">
+    //TODO:unused yet Feeds, use'em
     //<MarketDataGroup feedType="RTS-50" marketID="F" marketDepth="50" label="Top 50 Price Levels for Futures">
     //<MarketDataGroup feedType="RTS-50" marketID="O" marketDepth="50" label="Top 50 Price Levels for Options">
-    //<MarketDataGroup feedType="RTS-5" marketID="F" marketDepth="5" label="Top 5 Price Levels for Futures">
-    //<MarketDataGroup feedType="RTS-5" marketID="O" marketDepth="5" label="Top 5 Price Levels for Options">
     //<MarketDataGroup feedType="RTS-INDEX" marketID="I" label="MOEX Indexes">
-    //<MarketDataGroup feedType="RTS-INSTR" marketID="O" label="All Options defintion">
     //<MarketDataGroup feedType="RTS-NEWS-SYS" marketID="F" label="News feed">
-    //<MarketDataGroup feedType="RTS-TRADES" marketID="F" label="Trades for Futures">
-    //<MarketDataGroup feedType="RTS-TRADES" marketID="O" label="Trades for Options">
     public MarketDataGroup getMarketDataGroup(final FeedType feedType, final MarketID marketId) {
         for (final MarketDataGroup marketDataGroup : configuration.getMarketDataGroups()) {
             if (marketDataGroup.getFeedType() == feedType && marketDataGroup.getMarketID() == marketId) {

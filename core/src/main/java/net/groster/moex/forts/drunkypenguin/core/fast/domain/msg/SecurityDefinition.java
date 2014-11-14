@@ -94,7 +94,7 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
                 toInt();
 
         final GroupValue[] mdFeedTypesArray = fastMessage.getSequence("MDFeedTypes").getValues();
-        final List<MDFeedType> mdFeedTypesList = new ArrayList<>(mdFeedTypesArray.length);
+        mdFeedTypes = new ArrayList<>(mdFeedTypesArray.length);
         for (final GroupValue mdFeedTypeValue : mdFeedTypesArray) {
             final MDFeedType mdFeedType = new MDFeedType();
 
@@ -106,9 +106,8 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
             final ScalarValue MDBookTypeScalarValue = mdFeedTypeValue.getScalar("MDBookType");
             mdFeedType.setMdBookType(MDBookTypeScalarValue == null ? null : MDBookTypeScalarValue.toInt());
 
-            mdFeedTypesList.add(mdFeedType);
+            mdFeedTypes.add(mdFeedType);
         }
-        mdFeedTypes = mdFeedTypesList;
 
         final String securityTypeString = fastMessage.getString("SecurityType");
         securityType = securityTypeString == null ? null : SecurityType.valueOf(securityTypeString);
@@ -129,7 +128,7 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         final SequenceValue underlyingsSequenceValue = fastMessage.getSequence("Underlyings");
         if (underlyingsSequenceValue != null) {
             final GroupValue[] underlyingsArray = underlyingsSequenceValue.getValues();
-            final List<Underlying> underlyingsList = new ArrayList<>(underlyingsArray.length);
+            underlyings = new ArrayList<>(underlyingsArray.length);
             for (final GroupValue underlyingValue : underlyingsArray) {
                 final Underlying underlying = new Underlying();
                 underlying.setUnderlyingSymbol(underlyingValue.getString("UnderlyingSymbol"));
@@ -139,9 +138,8 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
                 underlying.setUnderlyingSecurityID(underlyingSecurityIDScalarValue == null ? null
                         : underlyingSecurityIDScalarValue.toLong());
 
-                underlyingsList.add(underlying);
+                underlyings.add(underlying);
             }
-            underlyings = underlyingsList;
         }
 
         final ScalarValue minPriceIncrementAmountScalarValue = fastMessage.getScalar(
@@ -163,21 +161,20 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
         final SequenceValue instrumentLegsSequenceValue = fastMessage.getSequence("InstrumentLegs");
         if (instrumentLegsSequenceValue != null) {
             final GroupValue[] instrumentLegsArray = instrumentLegsSequenceValue.getValues();
-            final List<InstrumentLeg> instrumentLegsList = new ArrayList<>(instrumentLegsArray.length);
+            instrumentLegs = new ArrayList<>(instrumentLegsArray.length);
             for (final GroupValue instrumentLegValue : instrumentLegsArray) {
                 final InstrumentLeg instrumentLeg = new InstrumentLeg();
                 instrumentLeg.setLegSymbol(instrumentLegValue.getString("LegSymbol"));
                 instrumentLeg.setLegSecurityID(instrumentLegValue.getLong("LegSecurityID"));
                 instrumentLeg.setLegRatioQty(instrumentLegValue.getBigDecimal("LegRatioQty"));
-                instrumentLegsList.add(instrumentLeg);
+                instrumentLegs.add(instrumentLeg);
             }
-            instrumentLegs = instrumentLegsList;
         }
 
         final SequenceValue evntGrpSequenceValue = fastMessage.getSequence("EvntGrp");
         if (evntGrpSequenceValue != null) {
             final GroupValue[] eventsArray = evntGrpSequenceValue.getValues();
-            final List<Event> events = new ArrayList<>(eventsArray.length);
+            evntGrp = new ArrayList<>(eventsArray.length);
             for (final GroupValue eventValue : eventsArray) {
                 final Event event = new Event();
                 event.setEventType(eventValue.getInt("EventType"));
@@ -185,9 +182,8 @@ public class SecurityDefinition extends AbstractFASTMessage implements FuturesSe
                         "EventDate"))).withZone(Constants.MOEX_TIME_ZONE).toLocalDate());
                 event.setEventTime(MessageType.FAST_DATETIME_UTC_FORMATTER.parseDateTime(Long.toString(eventValue.
                         getLong("EventTime"))).withZone(Constants.MOEX_TIME_ZONE));
-                events.add(event);
+                evntGrp.add(event);
             }
-            evntGrp = events;
         }
 
         final ScalarValue maturityDateScalarValue = fastMessage.getScalar("MaturityDate");
