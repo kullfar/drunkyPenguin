@@ -18,8 +18,6 @@ import org.openfast.Message;
 import org.openfast.ScalarValue;
 import org.openfast.SequenceValue;
 import org.openfast.template.Field;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public enum MessageType {
 
@@ -65,7 +63,6 @@ public enum MessageType {
     NEWS("News"),
     LOGON("Logon"),
     LOGOUT("Logout");
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageType.class);
     public static final DateTimeFormatter FAST_DATETIME_UTC_FORMATTER = DateTimeFormat.forPattern("yyyyMMddHHmmssSSS").
             withZone(DateTimeZone.UTC);
     public static final DateTimeFormatter FAST_DATE_UTC_FORMATTER = DateTimeFormat.forPattern("yyyyMMdd").withZone(
@@ -116,8 +113,8 @@ public enum MessageType {
         return name;
     }
 
-    public static void logUnknownFASTMessage(final Message message) {
-        final StringBuilder details = new StringBuilder("Have received unknown FAST message\n")
+    public static String buildHumanReadableStringForLoggingFASTMessage(final Message message) {
+        final StringBuilder details = new StringBuilder("Have received FAST message\n")
                 .append("'rawMessage' = '").append(message).append("'.\n")
                 .append("Full details are:\n");
         for (final Field f : message.getTemplate().getFieldDefinitions()) {
@@ -157,7 +154,6 @@ public enum MessageType {
             }
             details.append("\'\n");
         }
-        LOGGER.warn(details.toString());
+        return details.toString();
     }
-
 }

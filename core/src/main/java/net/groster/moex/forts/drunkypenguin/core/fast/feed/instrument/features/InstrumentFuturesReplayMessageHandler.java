@@ -8,6 +8,8 @@ import org.openfast.Context;
 import org.openfast.Message;
 import org.openfast.MessageHandler;
 import org.openfast.codec.Coder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
@@ -15,11 +17,15 @@ import org.springframework.context.annotation.Scope;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InstrumentFuturesReplayMessageHandler implements MessageHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentFuturesReplayMessageHandler.class);
     @Inject
     private InstrumentFuturesFastFeed instrumentFuturesFastFeed;
 
     @Override
     public void handleMessage(final Message message, final Context context, final Coder coder) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(MessageType.buildHumanReadableStringForLoggingFASTMessage(message));
+        }
         final MessageType messageType = MessageType.getById(message.getInt("templateId"));
         switch (messageType) {
             case RESET:
@@ -31,7 +37,7 @@ public class InstrumentFuturesReplayMessageHandler implements MessageHandler {
             case SEQUENCE_RESET:
                 break;
             default:
-                MessageType.logUnknownFASTMessage(message);
+                LOGGER.warn(MessageType.buildHumanReadableStringForLoggingFASTMessage(message));
                 break;
         }
     }

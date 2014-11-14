@@ -16,6 +16,9 @@ public class TradesFuturesIncrementalMessageHandler implements MessageHandler {
 
     @Override
     public void handleMessage(final Message message, final Context context, final Coder coder) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(MessageType.buildHumanReadableStringForLoggingFASTMessage(message));
+        }
         final MessageType messageType = MessageType.getById(message.getInt("templateId"));
         switch (messageType) {
             case RESET:
@@ -31,7 +34,7 @@ public class TradesFuturesIncrementalMessageHandler implements MessageHandler {
                 //MessageType.logUnknownFASTMessage(message);
                 break;
             default:
-                MessageType.logUnknownFASTMessage(message);
+                LOGGER.warn(MessageType.buildHumanReadableStringForLoggingFASTMessage(message));
                 break;
         }
     }
