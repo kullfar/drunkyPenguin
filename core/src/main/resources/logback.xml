@@ -7,16 +7,16 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/%d{yyyy-MM,aux}/drunkyPenguin.%d.log.gz</fileNamePattern>
         </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-        </filter>
+        </filter> -->
 
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--    <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/%d{yyyy-MM,aux}/drunkyPenguin-debug.%d.log.gz</fileNamePattern>
         </rollingPolicy>
@@ -27,10 +27,10 @@
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
-    </appender>
+    </appender>-->
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="FILE" />
-        <appender-ref ref="DEBUG_FILE" />
+        <!--<appender-ref ref="DEBUG_FILE" />-->
     </root>
 </configuration>
