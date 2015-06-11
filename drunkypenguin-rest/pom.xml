@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>net.groster.moex.forts.drunkypenguin</groupId>
-    <artifactId>rest</artifactId>
+    <artifactId>drunkypenguin-rest</artifactId>
     <packaging>jar</packaging>
 
     <name>drunkyPenguin REST service application</name>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>net.groster.moex.forts.drunkypenguin</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>drunkypenguin-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

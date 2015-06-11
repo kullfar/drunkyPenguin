@@ -9,9 +9,9 @@
     <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>core</module>
-        <module>console</module>
-        <module>rest</module>
+        <module>drunkypenguin-core</module>
+        <module>drunkypenguin-console</module>
+        <module>drunkypenguin-rest</module>
     </modules>
 
     <name>drunkyPenguin</name>

@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>net.groster.moex.forts.drunkypenguin</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>drunkypenguin-core</artifactId>
     <packaging>jar</packaging>
 
     <name>drunkyPenguin core</name>
